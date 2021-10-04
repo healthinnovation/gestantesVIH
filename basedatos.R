@@ -1,0 +1,8 @@
+library(tidyverse)
+library(haven)
+library(here)
+library (usethis)
+create_github_token()
+library(gitcreds)
+gitcreds_set()
+use_github()
