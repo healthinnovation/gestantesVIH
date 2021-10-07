@@ -9,6 +9,8 @@ output: html_document
 
 library(tidyverse)
 library(haven)
+library(gtsummary)
+library(survey)
 
 ```
 # Gestantes 2020
@@ -47,4 +49,24 @@ df_gestantes<-
 
 
 ```
+
+# EDA
+
+```{r}
+df_gestantes<-
+  df_gestantes %>% 
+  mutate(
+    S411H = ifelse(S411H == 1,"Si","No")
+  )
+```
+
+
+```{r}
+df2<- svydesign(id =~ V001, strata =~ V022, probs=~V005, data= df_gestantes)
+options(survey.lonely.psu="remove")
+
+df_gestantes$S411H %>% as.numeric %>% class()
+```
+
+
 
