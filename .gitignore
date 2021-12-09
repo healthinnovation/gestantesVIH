@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+
+#Data
+data/interim/*.csv
+data/processed/*.csv
