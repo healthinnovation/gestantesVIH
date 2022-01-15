@@ -6,6 +6,7 @@ dataprep<-function(data){
     ) %>% 
     
     mutate(
+      V005 = V005/1000000,
       S411H = as.factor(ifelse(S411H == 1,"Si","No")),
       SREGION = as.factor(SREGION),
       TIPORESIDENCIA = ifelse(V102 == 1,"URBANO","RURAL"),
