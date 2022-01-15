@@ -1,0 +1,309 @@
+---
+title: "Gestantes_VIH"
+---
+
+```{r, message=F, warning=F, error=F}
+
+library(tidyverse)
+library(haven)
+library(gtsummary)
+library(survey)
+
+```
+
+1. Preparacion de datos
+
+# Bases por anio
+He unido los archivos de cada modulo para tener una sola base por anio. Algunas encuestas son dirigidas a la mujer en edad fertil/madre, otras nivel hogar. Como veran, solo la base de programas sociales es a nivel hogar (de las que he usado), por eso es la unica que el join es por HHID. Las demas, son dirigidas a la madre/MEF. 
+
+## Gestantes 2020
+
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2020/RE223132.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2020/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2020/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2020/REC0111.sav") %>% select(-NCONGLOME)
+vih1 <- read_sav("./data/raw/endes back up/2020/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2020/REC91.sav")
+
+
+# Gestantes
+
+df_gestantes2020<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2020") 
+
+  
+```
+
+## Gestantes 2019
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2019/RE223132.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2019/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2019/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2019/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2019/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2019/REC91.sav")
+
+# Gestantes
+
+df_gestantes2019<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2019")
+
+```
+
+## Gestantes 2018
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2018/RE223132.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2018/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2018/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2018/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2018/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2018/REC91.sav")
+
+# Gestantes
+
+df_gestantes2018<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2018")
+```
+
+
+## Gestantes 2017
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2017/RE223132.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2017/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2017/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2017/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2017/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2017/REC91.sav")
+
+
+# Gestantes
+
+df_gestantes2017<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2017")
+
+```
+
+## Gestantes 2016
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2016/RE223132.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2016/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2016/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2016/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2016/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2016/REC91.sav")
+
+
+# Gestantes
+
+df_gestantes2016<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2016",
+         V005 = v005)
+  
+```
+
+
+## Gestantes 2015
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2015/RE223132.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2015/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2015/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2015/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2015/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2015/REC91.sav")
+
+# Gestantes
+
+df_gestantes2015<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2015")
+
+
+```
+
+## Gestantes 2014
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2014/RE223132.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2014/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2014/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2014/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2014/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2014/REC91.sav")
+
+# Gestantes
+
+df_gestantes2014<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2014")
+
+```
+
+## Gestantes 2013
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2013/RE223132.sav") %>% select(-(V001:V191)) # variables se repiten en encuesta REC0011 y generan conflicto al unirlas
+gestacion2 <- read_sav("./data/raw/endes back up/2013/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2013/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2013/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2013/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2013/REC91.sav")
+
+# Gestantes
+
+df_gestantes2013<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2013")
+
+
+```
+
+## Gestantes 2012
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2012/RE212232.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2012/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2012/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2012/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2012/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2012/REC91.sav")
+
+# Gestantes
+
+df_gestantes2012<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2012")
+
+
+```
+
+## Gestantes 2011
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2011/RE223132.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2011/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2011/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2011/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2011/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2011/REC91.sav")
+
+# Gestantes
+
+df_gestantes2011<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2011")
+
+
+```
+
+## Gestantes 2010
+```{r, message=F, warning=F, error=F}
+gestacion1 <- read_sav("./data/raw/endes back up/2010/RE223132.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2010/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2010/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2010/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2010/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2010/REC91.sav")
+
+# Gestantes
+
+df_gestantes2010<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  mutate(year = "2010")
+
+
+```
+
+# Union de bases
+
+Hasta aqui ya esta cada base por cada anio generada. Lo que sigue es unir las bases (cada una tiene una variable "year" que indica el anio). Lo que he hecho es unir de dos en dos y luego agruparlas. Deberia poder hacerse defrente de las 6 con bind_rows pero no se porque no me funciona. Lo revisare luego. Igual, posiblemente hagamos un paso extra mas si creamos una funcion para seleccionar/crear las variables que vayamos a utilizar para el analisis. Cuando nos reunamos les ensenio que hice con el proyecto de vacunas. 
+
+```{r, message=F, warning=F, error=F}
+list<- list(df_gestantes2010,df_gestantes2011,df_gestantes2012,
+            df_gestantes2013,df_gestantes2014,df_gestantes2015,
+            df_gestantes2016,df_gestantes2017,df_gestantes2018,
+            df_gestantes2019,df_gestantes2020)
+
+dataset<- map_df(.x = list,
+                 .f = ~dataprep(.x)) # funcion de prueba creada
+
+write.csv(dataset,"./data/data_analysis.csv", row.names = F)
+
+rm(list=ls()) # Elimina todos los objetos del enviroment
+```
+
+
+2. Transformar los datos en objetos survey
+
+```{r}
+df_gestantes<- read.csv("./data/data_analysis.csv")
+
+df<-
+  df_gestantes %>% 
+  group_by(year) %>% 
+  nest() %>% 
+  mutate(
+    datasvy = map(.x = data,
+                  .f = ~svydesign(id =~ V001, strata =~ V022, weights=~V005, data=.x))
+  )
+options(survey.lonely.psu="remove")
+
+
+```
+
