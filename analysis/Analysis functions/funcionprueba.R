@@ -1,6 +1,6 @@
 dataprep<-function(data){
   data %>% 
-    select(
+    select(CASEID,
       year,V012,
       V190,
       V150,
