@@ -2,6 +2,7 @@ library(tidyverse)
 library(haven)
 library(gtsummary)
 library(survey)
+library(stringr)
 
 
 #1. Preparacion de datos
@@ -29,11 +30,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+                     unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+                       unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 # UnionData
 df_gestantes2020<-
@@ -44,12 +47,11 @@ df_gestantes2020<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2020
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2020"
+  )
 
 dim(df_gestantes2020)
 
@@ -74,11 +76,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+                     unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 
 # Gestantes
@@ -90,12 +94,11 @@ df_gestantes2019<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2019
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2019"
+  )
 
 dim(df_gestantes2019)
 
@@ -120,11 +123,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+  unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 # Gestantes
 df_gestantes2018<-
@@ -135,12 +140,11 @@ df_gestantes2018<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2018
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2018"
+  )
 
 dim(df_gestantes2018)
 
@@ -165,11 +169,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+  unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 # Gestantes
 df_gestantes2017<-
@@ -180,12 +186,11 @@ df_gestantes2017<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2017
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2017"
+  )
 
 dim(df_gestantes2017)
 
@@ -209,11 +214,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+  unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 
 # Gestantes
@@ -225,14 +232,14 @@ df_gestantes2016<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2016
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2016"
+  )
 
 rename(df_gestantes2016, V005 = v005)
+dim(df_gestantes2016)
 
 ## Gestantes 2015
 
@@ -254,11 +261,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+  unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 # Gestantes
 df_gestantes2015<-
@@ -269,12 +278,11 @@ df_gestantes2015<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2015
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2015"
+  )
 
 dim(df_gestantes2015)
 
@@ -299,11 +307,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+  unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 # Gestantes
 df_gestantes2014<-
@@ -314,12 +324,11 @@ df_gestantes2014<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2014
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2014"
+  )
 
 dim(df_gestantes2014)
 
@@ -344,11 +353,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+  unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 # Gestantes
 df_gestantes2013<-
@@ -359,12 +370,11 @@ df_gestantes2013<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2013
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2013"
+  )
 
 dim(df_gestantes2013)
 
@@ -388,11 +398,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+  unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 # Gestantes
 df_gestantes2012<-
@@ -403,12 +415,11 @@ df_gestantes2012<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2012
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2012"
+  )
 
 dim(df_gestantes2012)
 
@@ -432,11 +443,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+  unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 # Gestantes
 df_gestantes2011<-
@@ -447,15 +460,13 @@ df_gestantes2011<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2011
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2011"
+  )
 
 dim(df_gestantes2011)
-
 
 ## Gestantes 2010
 
@@ -477,11 +488,13 @@ sociodemo_v <- sociodemo %>% select(CASEID, V012, V190, V150, V025, V103, V136, 
 vih1_v <- vih1 %>% select(CASEID, V763A, V763B, V763C, V774A, V774B, V774C)
 vih2_v <- vih2 %>% select(CASEID, S108N, SREGION, S621, S704N, S802, S815AA, S815AB,S815AC, S815AD, S815AE, S815AX, S815AZ, S816AA, S816AB, S816AC, S816AD, S816AE, S816AF,
                           S816AG, S816AH, S816AI, S816AJ, S816AK, S816AL, S816AW, S816AZ)
-nacion_v<-nacion %>% select(HHID, HV115, QH25A)
+nacion_v<-nacion %>% select(HHID, HVIDX, HV115, QH25A)  %>%
+  unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE)
 prenatal_v <- prenatal %>% select(CASEID, M2A, M2B, M2C, M2D, M2E, M2F, M2G, M2H, M2I, M2J, M2K, M2L, M2M, M2N, M10, M13,
                                   M14, M57E, M57F, M57G, M57H, M57I, M57J, M57K, M57L, M57M, M57N, M57O, M57P, M57Q, M57R, M57S,
                                   M57T, M57U, M57V, M57X)
-seguro_v <- seguro %>% select(HHID, SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z)
+seguro_v <- seguro %>% select(HHID, IDXH4,SH11A, SH11B, SH11C, SH11D, SH11E, SH11Y, SH11Z) %>%
+  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE)
 
 
 # Gestantes
@@ -493,12 +506,11 @@ df_gestantes2010<-
   left_join(vih1_v, by = "CASEID") %>% 
   left_join(vih2_v, by = "CASEID") %>%
   left_join(prenatal_v, by = "CASEID") %>%
+  left_join(nacion_v, by = "CASEID") %>%
+  left_join(seguro_v, by = "CASEID") %>%
   mutate(
-    HHID = as.numeric(str_sub(CASEID,1,-3)),
-    year = 2010
-  ) %>% 
-  left_join(nacion_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID")) %>% 
-  left_join(seguro_v %>% mutate(HHID = as.numeric(HHID)),by = c("HHID"))
+    year = "2010"
+  )
 
 dim(df_gestantes2010)
 
