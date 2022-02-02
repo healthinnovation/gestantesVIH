@@ -113,17 +113,23 @@ dataprep<-function(data){
       
       INDICERIQUEZA = factor(V190, levels = c(1:5), labels = c("1ro","2do","3ro","4to","5to")),
       
-      EDU_MADRE = as.factor(factor(V190, levels = c(0,1,2,3), labels = c("sin educ","primaria","secundaria","superior"))),
-      
       TIPORESIDENCIA = ifelse(V025==1,"URBANO","RURAL"),
       
       MIEMBROS_HOGAR = ifelse(V136<5,"1-4",
                           ifelse(V136>=5&V136<7,"5-6",
                               ifelse(V012>=7,"7 a mas",NA))),
   
-      ETNIA_MADRE = factor(V131, levels = c(1:12), labels = c("quechua","aimara","ashaninka","awajun",
+      ETNICIDAD = factor(V131, levels = c(1:12), labels = c("quechua","aimara","ashaninka","awajun",
                                                               "shipibo","shawi","matsigenka","achuar",
                                                               "Otro","castellano","portugues","Otro extranjero")),
+      ETNIA_MADRE = ifelse(V131==10,"castellano",
+                           ifelse(V131==1, "quechua",
+                                  ifelse(V131==2, "aimara",
+                                         ifelse(V131>=3&V131<=9, "amazonía",
+                                                ifelse(V131>=11,"extranjero",NA))))),
+      ESTADO_CIVIL = ifelse(HV115==0,"soltero", 
+                            ifelse(HV115>=1&HV115<=2,"casado/conviviente", 
+                                   ifelse(HV115>=3,"viuda/divorc/separ",NA))),
       
       DEPARTAMEN = factor(V024, levels = c(1:25), labels = c("AMAZONAS","ANCASH","APURIMAC","AREQUIPA","AYACUCHO",
                                                              "CAJAMARCA","CALLAO","CUSCO","HUANCAVELICA","HUANUCO",
@@ -135,6 +141,11 @@ dataprep<-function(data){
       EDU_MADRE = as.factor(factor(S108N, levels = c(0,1,2,3), labels = c("sin educ","primaria","secundaria","superior"))),
       
       REGIONNATURAL = factor(SREGION, levels = c(1,2,3,4), labels = c("limaMetro","Costa","Sierra","Selva")),
+      
+      RELACIONJEFE = ifelse(V150==1,"Jefe", 
+                            ifelse(V150==2, "Esposa", 
+                                   ifelse(V150==3, "Hijo/a", 
+                                          ifelse(V150>=4, "Otro", NA)))),
       
     )
 }
