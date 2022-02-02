@@ -14,7 +14,6 @@ dataprep<-function(data){
       V005,
       V022,
       HV115,
-      QH25A,
       S108N,
       SREGION,
       S621,
@@ -44,7 +43,6 @@ dataprep<-function(data){
       S413,
       S411G,
       S411H,
-      QI411_M,
       M2A,
       M2B,
       M2C,
@@ -82,7 +80,6 @@ dataprep<-function(data){
       M57V,
       M57X,
       D118Y,
-      V005V,
       V763A,
       V763B,
       V763C,
@@ -104,6 +101,40 @@ dataprep<-function(data){
     mutate(
       V005 = V005/1000000,
       S411H = as.factor(ifelse(S411H == 1,"Si","No")),
+      
+      S411G = as.factor(ifelse(S411G == 1,"Si","No")),
+      
       SREGION = as.factor(SREGION),
-      )
+      
+      EDAD_MADRE = ifelse(V012<25,"15-24a",
+                          ifelse(V012>=25&V012<30,"25-30a",
+                                 ifelse(V012>=30&V012<35,"30-35a",
+                                        ifelse(V012>=35,"35 a mas",NA)))),
+      
+      INDICERIQUEZA = factor(V190, levels = c(1:5), labels = c("1ro","2do","3ro","4to","5to")),
+      
+      EDU_MADRE = as.factor(factor(V190, levels = c(0,1,2,3), labels = c("sin educ","primaria","secundaria","superior"))),
+      
+      TIPORESIDENCIA = ifelse(V025==1,"URBANO","RURAL"),
+      
+      MIEMBROS_HOGAR = ifelse(V136<5,"1-4",
+                          ifelse(V136>=5&V136<7,"5-6",
+                              ifelse(V012>=7,"7 a mas",NA))),
+  
+      ETNIA_MADRE = factor(V131, levels = c(1:12), labels = c("quechua","aimara","ashaninka","awajun",
+                                                              "shipibo","shawi","matsigenka","achuar",
+                                                              "Otro","castellano","portugues","Otro extranjero")),
+      
+      DEPARTAMEN = factor(V024, levels = c(1:25), labels = c("AMAZONAS","ANCASH","APURIMAC","AREQUIPA","AYACUCHO",
+                                                             "CAJAMARCA","CALLAO","CUSCO","HUANCAVELICA","HUANUCO",
+                                                             "ICA","JUNIN","LA LIBERTAD","LAMBAYEQUE","LIMA",
+                                                             "LORETO","MADRE DE DIOS","MOQUEGUA","PASCO","PIURA",
+                                                             "PUNO","SAN MARTIN","TACNA","TUMBES","UCAYALI")),
+      
+      
+      EDU_MADRE = as.factor(factor(S108N, levels = c(0,1,2,3), labels = c("sin educ","primaria","secundaria","superior"))),
+      
+      REGIONNATURAL = factor(SREGION, levels = c(1,2,3,4), labels = c("limaMetro","Costa","Sierra","Selva")),
+      
+    )
 }
