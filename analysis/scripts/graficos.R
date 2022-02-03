@@ -1,186 +1,188 @@
 library(tidyverse)
 library(survey)
 library(gtsummary)
+library(ggsci)
+
+df_gestantes<- read.csv("./data/data_analysis.csv")
 
 df<-
-  dataset %>% 
-  filter(!is.na(checkup_rule_out_hiv_aids)) %>% 
-  group_by(year) %>%
+  df_gestantes %>% 
+  group_by(year) %>% 
   nest() %>% 
   mutate(
-    df2= map(.x = data, 
-            .f = ~svydesign(id =~ conglomerate, strata =~ stratum, weights=~weighting_factor, data=.x))) 
-
-
+    datasvy = map(.x = data,
+                  .f = ~svydesign(id =~ V001, strata =~ V022, weights=~V005, data=.x))
+  )
 options(survey.lonely.psu="remove")
 
 
-tamizaje<-df %>% 
+df2<-
+  df %>% 
   mutate(
     
-    tamizaje = map(.x = df2,
-                   .f = ~svytotal(~checkup_rule_out_hiv_aids, design = .x, na.rm = T ))
-  )
+    vih = map(.x = datasvy,
+              .f = ~svyciprop(~as.factor(S411H), design = .x, na.rm = T)),
+    
+    vihprop = map_dbl(.x = vih,
+                  .f = ~as.numeric(.x)),
+    
+    vihci = map(.x= vih,
+                .f = ~confint(.x) %>% 
+                  as.data.frame() %>%
+                  rownames_to_column("var"))
 
-
-################
-
-dataset %>% 
-  filter(!is.na(checkup_rule_out_hiv_aids)) %>% 
-  select(year, checkup_rule_out_hiv_aids) %>% 
-  group_by(year,checkup_rule_out_hiv_aids) %>% 
-  summarise(
-    n = n()
-  ) %>% 
-  ggplot(aes(x = year, y = n, col = checkup_rule_out_hiv_aids))+
-  geom_line()+
-  theme_bw()
-
-
-
-#######
-
-dataset %>% 
-  filter(!is.na(checkup_rule_out_syphilis)) %>% 
-  select(year, checkup_rule_out_syphilis) %>% 
-  group_by(year,checkup_rule_out_syphilis) %>% 
-  summarise(
-    n = n()
   ) %>% 
   
-  ggplot(aes(x = year, y = n, col = checkup_rule_out_syphilis))+
-  geom_line()+
-  theme_bw()
+  unnest(vihci)
 
 
-########
-
-# tamizaje por WI
-
-dataset %>% 
-  filter(!is.na(checkup_rule_out_hiv_aids)) %>% 
-  select(year, checkup_rule_out_hiv_aids,wealth_index) %>% 
-  group_by(year,checkup_rule_out_hiv_aids,wealth_index) %>% 
-  summarise(
-    n = n()
-  ) %>% 
+df2 %>% 
+  ggplot(aes(x = year, y = vihprop*100))+
+  geom_line(size = 1.2, color = "#0C6291")+
   
-  mutate(
-    wealth_index = factor(wealth_index, labels = c("Poorest","Poor","Middle",
-                                                   "Rich","Richest"))
-  ) %>% 
-  ggplot(aes(x = year, y = n, col = checkup_rule_out_hiv_aids))+
-  geom_line()+
+  xlab("Years") +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2020), limits = c(2010,2020.1))+
+  ylab("Prop. %")+
+  
   theme_bw()+
-  facet_wrap(~wealth_index)
-
-
-# tamizaje por region
-
-dataset %>% 
-  filter(!is.na(checkup_rule_out_hiv_aids)) %>% 
-  group_by(region, checkup_rule_out_hiv_aids) %>% 
-  summarize(cases = n()) %>% 
-  mutate(prop = cases / sum(cases)) %>% 
-  ungroup() %>% 
-  ggplot(aes(region, prop, fill = checkup_rule_out_hiv_aids)) +
-  geom_bar(stat = "identity", position = "stack") + 
-  #scale_y_continuous(labels = percent) +
-  coord_flip()
-
-#######
-# tamizaje por educacion
-
-dataset %>% 
-  filter(!is.na(checkup_rule_out_hiv_aids)) %>% 
-  group_by(highest_edu_level_woman, checkup_rule_out_hiv_aids) %>% 
-  summarize(cases = n()) %>% 
-  mutate(prop = cases / sum(cases)) %>% 
-  ungroup() %>% 
-  mutate(
-    edu = factor(highest_edu_level_woman, labels = c("No education","Primary",
-                                                     "Secondary","Higher")
-  )) %>% 
-  ggplot(aes(edu, prop, fill = checkup_rule_out_hiv_aids)) +
-  geom_bar(stat = "identity", position = "stack") + 
-  #scale_y_continuous(labels = percent) +
-  coord_flip()
-
-# tamizaje por seguro de salud
-
-dataset %>% 
-  filter(!is.na(checkup_rule_out_hiv_aids)) %>% 
-  group_by(pregnancy_sis_affiliation, checkup_rule_out_hiv_aids,year) %>% 
-  summarize(cases = n()) %>% 
-  mutate(prop = cases / sum(cases)) %>% 
-  ungroup() %>% 
-  ggplot(aes(pregnancy_sis_affiliation, prop, fill = checkup_rule_out_hiv_aids)) +
-  geom_col(stat = "identity", position = "stack") + 
-  #scale_y_continuous(labels = percent) +
-  coord_flip()+
-  facet_wrap(~year)
-
-# tamizaje por educacion/region
-
-# tamizaje por educacion
-
-dataset %>% 
-  filter(!is.na(checkup_rule_out_hiv_aids)) %>% 
-  group_by(highest_edu_level_woman, checkup_rule_out_hiv_aids,region) %>% 
-  summarize(cases = n()) %>% 
-  mutate(prop = cases / sum(cases)) %>% 
-  ungroup() %>% 
-  mutate(
-    edu = factor(highest_edu_level_woman, labels = c("No education","Primary",
-                                                     "Secondary","Higher")
-    )) %>% 
-  ggplot(aes(edu, prop, fill = checkup_rule_out_hiv_aids)) +
-  geom_bar(stat = "identity", position = "stack") + 
-  #scale_y_continuous(labels = percent) +
-  coord_flip()+
-  facet_wrap(~region)+
+  
   theme(
-    panel.spacing.x = unit(2, "line")
+    axis.title = element_text(face ="bold", size = 11),
+    legend.text = element_text(size = 8, face = "bold", size = 12),
+    legend.position = "top",
+    strip.text = element_text(face = "bold")
   )
 
-ggsave("tamizaje.png", width = 16, height = 6)
+ggsave("figura1.png",width = 8, height = 6)
 
 
-# tamizaje por violencia fisica durante embarazo
 
-dataset %>% 
-  filter(!is.na(checkup_rule_out_hiv_aids)& !is.na(physical_violence_pregnancy_nobody)) %>% 
-  group_by(physical_violence_pregnancy_nobody, checkup_rule_out_hiv_aids,region) %>% 
-  summarize(cases = n()) %>% 
-  mutate(prop = cases / sum(cases)) %>% 
-  ungroup() %>% 
-  ggplot(aes(physical_violence_pregnancy_nobody, prop, fill = checkup_rule_out_hiv_aids)) +
-  geom_bar(stat = "identity", position = "dodge") + 
-  coord_flip()+
-  facet_wrap(~region)
+df2 %>% 
+  filter(year%in%c(2010,2020)) %>% 
+  ggplot(aes(x = year, y = vihprop*100))+
+  geom_point(color = "#0C6291", size = 6)+
+  geom_line(color = "#0C6291", size = 1.5)+
+  
+  xlab("Years") +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2020), limits = c(2009,2022))+
+  ylab("Prop. %")+
+  
+  theme_bw()+
+  
+  theme(
+    axis.title = element_text(face ="bold", size = 11),
+    legend.text = element_text(face = "bold", size = 12),
+    legend.position = "top",
+    strip.text = element_text(face = "bold")
+  )
 
-# tamizaje por violencia emocional
-
-dataset %>% 
-  filter(!is.na(checkup_rule_out_hiv_aids)) %>% 
-  group_by(emotional_violence, checkup_rule_out_hiv_aids) %>% 
-  summarize(cases = n()) %>% 
-  mutate(prop = cases / sum(cases)) %>% 
-  ungroup() %>% 
-  ggplot(aes(emotional_violence, prop, fill = checkup_rule_out_hiv_aids)) +
-  geom_bar(stat = "identity", position = "dodge") + 
-  coord_flip()
-
-# tamizaje por violencia sexual
+ggsave("figura2.png",width = 8, height = 6)
 
 
-dataset %>% 
-  filter(!is.na(checkup_rule_out_hiv_aids)) %>% 
-  group_by(sexual_violence, checkup_rule_out_hiv_aids) %>% 
-  summarize(cases = n()) %>% 
-  mutate(prop = cases / sum(cases)) %>% 
-  ungroup() %>% 
-  ggplot(aes(sexual_violence, prop, fill = checkup_rule_out_hiv_aids)) +
-  geom_bar(stat = "identity", position = "dodge") + 
-  coord_flip()
+df2<-
+  df %>% 
+  mutate(
+    vih = map(.x = datasvy,
+              .f = ~svyby(~as.factor(S411H), by = ~INDICERIQUEZA, design = .x, FUN =svyciprop, vartype=c('se','ci')) %>% 
+                as.data.frame())
+  ) %>% 
+  unnest(vih)
+
+df2 %>% 
+  ggplot(aes(x = year, y = `as.factor(S411H)`*100, col = INDICERIQUEZA))+
+  geom_line(size = 1.2)+
+  scale_color_npg()+
+  xlab("Years") +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2020), limits = c(2010,2020.2))+
+  ylab("Prop. %")
+
+ggsave("figura3.png",width = 8, height = 6)
+  
+df2 %>% 
+  filter((year%in%c(2010,2020))&INDICERIQUEZA%in%c("1ro","5to")) %>% 
+  ggplot(aes(x = year, y = `as.factor(S411H)`*100, col = INDICERIQUEZA))+
+  geom_line(size = 1.6)+
+  geom_point(size = 6)+
+  scale_color_npg()+
+  xlab("Years") +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2020), limits = c(2009.8,2020.5))+
+  ylab("Prop. %")
+
+
+ggsave("figura4.png",width = 8, height = 6)
+
+
+
+
+df2<-
+  df %>% 
+  mutate(
+    vih = map(.x = datasvy,
+              .f = ~svyby(~as.factor(S411H), by = ~INDICERIQUEZA+TIPORESIDENCIA, design = .x, FUN =svyciprop, vartype=c('se','ci')) %>% 
+                as.data.frame())
+  ) %>% 
+  unnest(vih)
+
+dat<-
+  df2 %>% 
+  filter((year%in%c(2010,2020))&INDICERIQUEZA%in%c("1ro","5to")) %>% 
+  mutate(
+    WI = paste0(INDICERIQUEZA,TIPORESIDENCIA),
+    line = ifelse((INDICERIQUEZA == "1ro"| INDICERIQUEZA == "5to") & TIPORESIDENCIA == "RURAL", 1, 0)
+  )
+
+
+  ggplot()+
+  geom_line(data = dat %>% filter(TIPORESIDENCIA == "RURAL"), 
+            aes(x = year, y = `as.factor(S411H)`*100, group = WI,col = WI, linetype = TIPORESIDENCIA))+
+    
+  geom_point(data = dat %>% filter(TIPORESIDENCIA == "RURAL"), 
+             aes(x = year, y = `as.factor(S411H)`*100, group = WI, col = WI, fill = TIPORESIDENCIA),size = 2)+
+    
+    
+  geom_line(data = dat %>% filter(TIPORESIDENCIA == "URBANO"), 
+              aes(x = year, y = `as.factor(S411H)`*100, group = WI, col = WI, linetype = TIPORESIDENCIA))+
+
+  geom_point(data = dat %>% filter(TIPORESIDENCIA == "URBANO"), 
+               aes(x = year, y = `as.factor(S411H)`*100, group = WI, col = WI, fill = TIPORESIDENCIA),size = 2)+
+    
+  scale_color_npg()+
+  labs(x="Years", col = "Wealth Index") +
+  #guides(linetype = "none")+
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2020), limits = c(2009.8,2020.5))+
+  ylab("Prop. %")+
+    theme_bw()
+
+
+ggsave("figura5.png",width = 8, height = 6)
+
+
+
+
+df2<-
+  df %>% 
+  mutate(
+    vih = map(.x = datasvy,
+              .f = ~svyby(~as.factor(S411H), by = ~INDICERIQUEZA+DEPARTAMEN, design = .x, FUN =svyciprop, vartype=c('se','ci'), na.rm.all = T) %>% 
+                as.data.frame())
+  ) %>% 
+  unnest(vih)
+
+dat<-
+  df2 %>% 
+  filter((year%in%c(2010,2020))&INDICERIQUEZA%in%c("1ro","5to"))
+
+dat %>% 
+  ggplot(aes(x = year, y = `as.factor(S411H)`*100, col = INDICERIQUEZA))+
+  geom_line()+
+  geom_point()+
+  scale_color_npg()+
+  xlab("Years") +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2020), limits = c(2009.8,2020.5))+
+  ylab("Prop. %") +
+  facet_wrap(~DEPARTAMEN)
+
+ggsave("figura6.png",width = 13, height = 7)
+
+
 
