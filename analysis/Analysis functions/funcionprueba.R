@@ -96,6 +96,7 @@ dataprep<-function(data){
       SH11E,
       SH11Y,
       SH11Z,
+      HC1,
     ) %>% 
     
     mutate(
@@ -135,6 +136,7 @@ dataprep<-function(data){
       EDU_MADRE = as.factor(factor(S108N, levels = c(0,1,2,3), labels = c("sin educ","primaria","secundaria","superior"))),
       
       REGIONNATURAL = factor(SREGION, levels = c(1,2,3,4), labels = c("limaMetro","Costa","Sierra","Selva")),
+      EDAD_HIJOS = ifelse(HC1<=12, "menor igual a 12 meses", "mayor de 12 meses")
       
     )
 }
