@@ -48,7 +48,7 @@ df2 %>%
   
   theme(
     axis.title = element_text(face ="bold", size = 11),
-    legend.text = element_text(size = 8, face = "bold", size = 12),
+    legend.text = element_text(face = "bold", size = 12),
     legend.position = "top",
     strip.text = element_text(face = "bold")
   )
@@ -163,17 +163,17 @@ df2<-
   df %>% 
   mutate(
     vih = map(.x = datasvy,
-              .f = ~svyby(~as.factor(S411H), by = ~INDICERIQUEZA+DEPARTAMEN, design = .x, FUN =svyciprop, vartype=c('se','ci'), na.rm.all = T) %>% 
+              .f = ~svyby(~as.factor(S411H), by = ~TIPORESIDENCIA+DEPARTAMEN, design = .x, FUN =svyciprop, vartype=c('se','ci'), na.rm.all = T) %>% 
                 as.data.frame())
   ) %>% 
   unnest(vih)
 
 dat<-
-  df2 %>% 
-  filter((year%in%c(2010,2020))&INDICERIQUEZA%in%c("1ro","5to"))
+  df2 
+  #filter((year%in%c(2010,2020))&INDICERIQUEZA%in%c("1ro","5to"))
 
 dat %>% 
-  ggplot(aes(x = year, y = `as.factor(S411H)`*100, col = INDICERIQUEZA))+
+  ggplot(aes(x = year, y = `as.factor(S411H)`*100, col = TIPORESIDENCIA))+
   geom_line()+
   geom_point()+
   scale_color_npg()+
@@ -183,6 +183,29 @@ dat %>%
   facet_wrap(~DEPARTAMEN)
 
 ggsave("figura6.png",width = 13, height = 7)
+
+
+df2<-
+  df %>% 
+  mutate(
+    vih = map(.x = datasvy,
+              .f = ~svyby(~as.factor(S411H), by = ~EDU_MADRE, design = .x, FUN =svyciprop, vartype=c('se','ci')) %>% 
+                as.data.frame())
+  ) %>% 
+  unnest(vih)
+
+df2 %>% 
+ 
+  ggplot(aes(x = year, y = `as.factor(S411H)`*100, col = EDU_MADRE))+
+  geom_line(size = 1.2)+
+  scale_color_npg()+
+  xlab("Years") +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2020), limits = c(2010,2020.2))+
+  ylab("Prop. %")
+
+ggsave("figura7.png",width = 8, height = 6)
+
+
 
 
 
