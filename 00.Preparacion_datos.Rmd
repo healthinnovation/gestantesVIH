@@ -30,7 +30,8 @@ vih2 <- read_sav("./data/raw/endes back up/2020/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2020/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2020/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2020/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2020/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2020/RECH6.sav") %>% unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+
 
 # Gestantes
 
@@ -61,7 +62,7 @@ vih2 <- read_sav("./data/raw/endes back up/2019/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2019/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2019/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2019/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2019/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2019/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
 
 # Gestantes
 
@@ -93,7 +94,7 @@ vih2 <- read_sav("./data/raw/endes back up/2018/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2018/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2018/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2018/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2018/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2018/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
 
 # Gestantes
 
@@ -126,7 +127,7 @@ vih2 <- read_sav("./data/raw/endes back up/2017/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2017/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2017/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2017/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2017/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2017/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
 
 
 # Gestantes
@@ -159,7 +160,7 @@ vih2 <- read_sav("./data/raw/endes back up/2016/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2016/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2016/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2016/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2016/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2016/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
 
 # Gestantes
 
@@ -193,7 +194,7 @@ vih2 <- read_sav("./data/raw/endes back up/2015/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2015/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2015/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2015/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2015/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2015/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
 
 # Gestantes
 
@@ -226,7 +227,7 @@ vih2 <- read_sav("./data/raw/endes back up/2014/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2014/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2014/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2014/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2014/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2014/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
 
 # Gestantes
 
@@ -258,7 +259,7 @@ vih2 <- read_sav("./data/raw/endes back up/2013/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2013/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2013/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2013/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2013/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2013/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
 
 # Gestantes
 
@@ -291,7 +292,7 @@ vih2 <- read_sav("./data/raw/endes back up/2012/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2012/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2012/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2012/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2012/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2012/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
 
 # Gestantes
 
@@ -324,7 +325,7 @@ vih2 <- read_sav("./data/raw/endes back up/2011/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2011/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2011/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2011/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2011/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2011/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
 
 # Gestantes
 
@@ -357,7 +358,7 @@ vih2 <- read_sav("./data/raw/endes back up/2010/REC91.sav")
 nacion <- read_sav("./data/raw/endes back up/2010/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2010/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2010/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2010/RECH6.sav") %>%  unite("CASEID", HHID:HC0, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2010/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
 
 # Gestantes
 
