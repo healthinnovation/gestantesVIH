@@ -10,6 +10,7 @@ library(tidyverse)
 library(haven)
 library(gtsummary)
 library(survey)
+library(stringr)
 
 ```
 
@@ -289,10 +290,10 @@ violence <- read_sav("./data/raw/endes back up/2012/REC84DV.sav")
 sociodemo <- read_sav("./data/raw/endes back up/2012/REC0111.sav")
 vih1 <- read_sav("./data/raw/endes back up/2012/RE758081.sav")
 vih2 <- read_sav("./data/raw/endes back up/2012/REC91.sav")
-nacion <- read_sav("./data/raw/endes back up/2012/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+nacion <- read_sav("./data/raw/endes back up/2012/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = " 0",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2012/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2012/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2012/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2012/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = " 0",remove = FALSE) #HHID
 
 # Gestantes
 
@@ -322,10 +323,11 @@ violence <- read_sav("./data/raw/endes back up/2011/REC84DV.sav")
 sociodemo <- read_sav("./data/raw/endes back up/2011/REC0111.sav")
 vih1 <- read_sav("./data/raw/endes back up/2011/RE758081.sav")
 vih2 <- read_sav("./data/raw/endes back up/2011/REC91.sav")
-nacion <- read_sav("./data/raw/endes back up/2011/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+nacion <- read_sav("./data/raw/endes back up/2011/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = " 0",remove = FALSE) #HHID
 prenatal <- read_sav("./data/raw/endes back up/2011/REC41.sav") 
 seguro <- read_sav("./data/raw/endes back up/2011/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
-children <- read_sav("./data/raw/endes back up/2011/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2011/RECH6.sav") %>% unite("CASEID", HHID,HC51, sep = " 0",remove = FALSE) #HHID
+
 
 # Gestantes
 
