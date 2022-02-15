@@ -118,9 +118,11 @@ dataprep<-function(data){
       
       TYPE_PLACE_RESIDENCE = ifelse(V025==1,"URBAN","RURAL"),
       
-      ETHNICITY = factor(V131, levels = c(1:12), labels = c("QUECHUA","AYMARA","ASHANINKA","AWAJUN",
-                                                            "SHIPIBO","SHAWI","MATSIGENKA","ACHUAR",
-                                                            "OTHER","CASTELLANO","PORTUGUES","OTHER_FOREIGN_LANGUAGE")),
+      ETHNICITY = ifelse(V131==10,"SPANISH",
+                                ifelse(V131==1, "QUECHUA",
+                                          ifelse(V131==2, "AIMARA",
+                                                 ifelse(V131>=3&V131<=9, "AMAZONIAN",
+                                                        ifelse(V131>=11,"FOREIGNER",NA))))),
       
       DEPARTAMEN = factor(V024, levels = c(1:25), labels = c("AMAZONAS","ANCASH","APURIMAC","AREQUIPA","AYACUCHO",
                                                              "CAJAMARCA","CALLAO","CUSCO","HUANCAVELICA","HUANUCO",
@@ -135,31 +137,37 @@ dataprep<-function(data){
                             ifelse(HV115>=1&HV115<=2,"MARRIED/LIVING_TOGETHER", 
                                    ifelse(HV115>=3,"WIDOWED/DIVORCED/SEPARATED",NA))),
       
-      EDU_LEVEL = as.factor(factor(S108N, levels = c(0,1,2,3,4,5,9), labels = c("NONE/PRESCHOOL","PRIMARY","SECONDARY","NON-UNIVERSITY_HIGHER","UNIVERSITY_HIGHER","POSTGRADUATE","MISSING"))),
-      
+      EDU_LEVEL = ifelse(S108N==0,"NONE/PRESCHOOL",
+                         ifelse(S108N==1,"PRIMARY",
+                                ifelse(S108N==2,"SECONDARY",
+                                       ifelse(S108N>=3&S108N<6,"HIGHER",NA)))),
+
       NATURAL_REGION = factor(SREGION, levels = c(1:4), labels = c("LIMA_METROPOLITAN","REST_OF_COAST","HIGHLAND","JUNGLE")),
       
       PARTNER_APPROVE_DISAPPROVE_FAMILY_PLANNING = factor(S621, levels = c(1,2,8), labels = c("APPROVE","DISAPPROVE","DONT_KNOW")),
       
-      PARTNER_EDU_LEVEL = factor(S704N, levels = c(0,1,2,3,4,5,8), labels = c("NONE/PRESCHOOL","PRIMARY","SECONDARY","NON-UNIVERSITY_HIGHER","UNIVERSITY_HIGHER","POSTGRADUATE","DONT_KONW")),
-      
+      PARTNER_EDU_LEVEL = ifelse(S704N==0,"NONE/PRESCHOOL",
+                                 ifelse(S704N==1,"PRIMARY",
+                                        ifelse(S704N==2,"SECONDARY",
+                                               ifelse(S704N>=3&S704N<6,"HIGHER",NA)))),
+
       CAN_SOMETHING_BE_DONE_PREVENT_AIDS = factor(S802, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
       
       
-      KNOW_ETS = (S815AA+S815AB+S815AC+S815AD+S815AE+S815AX+S815AZ) , KNOW_ETS=case_when(KNOW_ETS==0~"Ninguna",
-                                                                                      KNOW_ETS==1~"Almenos1",
-                                                                                      KNOW_ETS>=2~"Masde1"),
+      KNOW_ETS = (S815AA+S815AB+S815AC+S815AD+S815AE+S815AX), KNOW_ETS=case_when(KNOW_ETS==0~"Ninguna",
+                                                                                      KNOW_ETS==1~"Almenos 1",
+                                                                                      KNOW_ETS>=2~"Mas de 1"),
       
-      KNOW_SYMPTON_ETS = (S816AA+S816AB+S816AC+S816AD+S816AE+S816AF+S816AG+S816AH+S816AI+S816AJ+S816AK+S816AL+S816AW+S816AZ) , KNOW_ETS=case_when(KNOW_ETS==0~"NO",
-                                                                                         KNOW_ETS>=1~"YES"),
+      KNOW_SYMPTON_ETS = (S816AA+S816AB+S816AC+S816AD+S816AE+S816AF+S816AG+S816AH+S816AI+S816AJ+S816AK+S816AL+S816AW+S816AZ) , KNOW_SYMPTON_ETS=case_when(KNOW_SYMPTON_ETS==0~"NO",
+                                                                                                                                                          KNOW_SYMPTON_ETS>=1~"YES"),
       
-      CHECKUP_RULE_OUT_SYPHILIS = factor(S411G, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
+      CHECKUP_RULE_OUT_SYPHILIS = as.factor(ifelse(S411G == 1,"Si","No")),
       
-      CHECKUP_RULE_OUT_HIV_AIDS = factor(S411G, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
+      CHECKUP_RULE_OUT_HIV = as.factor(ifelse(S411H == 1,"Si","No")),
 
-      M10 = factor(M10, levels = c(1,2,3), labels = c("ENTONCES","ESPERAR_MAS","NO_QUERIA_MAS")),
+      INTENDED_PREGNANCY = factor(M10, levels = c(1,2,3), labels = c("ENTONCES","ESPERAR_MAS","NO_QUERIA_MAS")),
 
-      PHYSICAL_VIOLENCE_PREGNANCY_NOBODY= factor(D118Y, levels = c(0,1), labels = c("NO","YES")),
+      PHYSICAL_VIOLENCE= factor(D118Y, levels = c(0,1), labels = c("NO","YES")),
       
       DIAGNOSTED_STD_LAST_12_MONTHS = factor(S411G, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
       
@@ -167,18 +175,24 @@ dataprep<-function(data){
       
       #KNOW_TRANSMIT_MOTHER_TO_DS = (V774A+V774B+V774C) , KNOW_TRANSMIT_MOTHER_TO_DS=case_when(KNOW_ETS==0~"NO",KNOW_ETS>=1~"YES"),
       
-      MIEMBROS_HOGAR = ifelse(V136<5,"1-4",
+      HOUSEHOLD_MEMBERS = ifelse(V136<5,"1-4",
                           ifelse(V136>=5&V136<7,"5-6",
-                              ifelse(V012>=7,"7 a mas",NA))),
-  
-      ETNIA_MADRE = ifelse(V131==10,"castellano",
-                           ifelse(V131==1, "quechua",
-                                  ifelse(V131==2, "aimara",
-                                         ifelse(V131>=3&V131<=9, "amazonía",
-                                                ifelse(V131>=11,"extranjero",NA))))),
+                              ifelse(V012>=7,"MORE THAN 7",NA))),
+      
+      FIRST_PRENATAL_VISIT = factor(M13, levels = c(0,1,2,3,4,5,6,7,8,9)),
+      
+      NUMBER_PRENATAL_VISITS = factor(M14, levels = c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)),
+      
+      TOTAL_CHILDREN = factor(V201, levels = c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)),
+                               
+      UNDER_SIXYEARS_CHILDREN =factor(V208, levels = c(1,2,3,4)),
+      
+      LAST_BIRTH = ifelse(V209==0,"MORE THAN 12 MONTHS",
+                          ifelse(V209>=1&V209<4,"LESS THAN 12 MONTHS", NA)),
       
       
       #EDAD_HIJOS = ifelse(HC1<=12, "menor igual a 12 meses", "mayor de 12 meses"),
+      
       
       
     )
