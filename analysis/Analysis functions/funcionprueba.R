@@ -154,12 +154,13 @@ dataprep<-function(data){
       CAN_SOMETHING_BE_DONE_PREVENT_AIDS = factor(S802, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
       
       
-      KNOW_ETS = (S815AA+S815AB+S815AC+S815AD+S815AE+S815AX), KNOW_ETS=case_when(KNOW_ETS==0~"Ninguna",
-                                                                                      KNOW_ETS==1~"Almenos 1",
-                                                                                      KNOW_ETS>=2~"Mas de 1"),
+      KNOW_ETS = (S815AA+S815AB+S815AC+S815AD+S815AE+S815AX), KNOW_ETS=case_when(KNOW_ETS==0~"NONE",
+                                                                                      KNOW_ETS==1~"AT LEAST 1",
+                                                                                      KNOW_ETS>=2~"MORE THAN 1"),
       
-      KNOW_SYMPTON_ETS = (S816AA+S816AB+S816AC+S816AD+S816AE+S816AF+S816AG+S816AH+S816AI+S816AJ+S816AK+S816AL+S816AW+S816AZ) , KNOW_SYMPTON_ETS=case_when(KNOW_SYMPTON_ETS==0~"NO",
-                                                                                                                                                          KNOW_SYMPTON_ETS>=1~"YES"),
+      KNOW_SYMPTON_ETS = (S816AA+S816AB+S816AC+S816AD+S816AE+S816AF+S816AG+S816AH+S816AI+S816AJ+S816AK+S816AL+S816AW) , KNOW_SYMPTON_ETS=case_when(KNOW_SYMPTON_ETS==0~"NO",
+                                                                                                                                                   KNOW_SYMPTON_ETS==1~"AT LEAST 1",
+                                                                                                                                                   KNOW_SYMPTON_ETS>=2~"MORE THAN 1"),
       
       CHECKUP_RULE_OUT_SYPHILIS = as.factor(ifelse(S411G == 1,"Si","No")),
       
