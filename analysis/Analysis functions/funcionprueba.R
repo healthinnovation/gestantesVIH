@@ -102,7 +102,6 @@ dataprep<-function(data){
       IDX94,
       MIDX,
     ) %>% 
-    
     mutate(
       V005 = V005/1000000,
       
@@ -200,30 +199,25 @@ dataprep<-function(data){
                                                          (M57F|M57H|M57L|M57M|M57N|M57Q)==1 ~ "Level 2",
                                                          (M57E|M57I|M57J)==1 ~ "Level 3"),
       
-      HAVE_ITS_SYMPTOMS = (V763B+V763C), HAVE_ITS_SYMPTOMS=case_when(HAVE_ITS_SYMPTOMS==0 ~ "None", 
-                                                                     HAVE_ITS_SYMPTOMS==1~"Only sore/ulcer",
-                                                                     HAVE_ITS_SYMPTOMS==2~"Only flow",
-                                                                     HAVE_ITS_SYMPTOMS==3~"Both"),
+      HAVE_ITS_SYMPTOMS = case_when((V763B+V763C)==0 ~ "None",
+                                    (V763B==1 & V763C==0) ~ "Only sore/ulcer",
+                                    (V763B==0 & V763C==1) ~ "Only flow",
+                                    (V763C+V763C)==2 ~ "Both"),
       
-      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = (V774A+V774B+V774C), KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD=case_when(KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==0 ~ "No",
-                                                                                                                   KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==1 ~ "Yes"),                                                                                                                          KNOW_SYMPTON_ETS==1~"AT LEAST 1",
+      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = (V774A+V774B+V774C), KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD=case_when((KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD<3)==0 ~ "No",
+                                                                                                                   (KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==3 ~ "Yes"),                                                                                                                         KNOW_SYMPTON_ETS==1~"AT LEAST 1",
                                                                                                                                                     
       TOTAL_CHILDREN = factor(V201, levels = c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)),
                                
       UNDER_SIXYEARS_CHILDREN =factor(V208, levels = c(1,2,3,4)),
       
-      HEALTH_INSURANCE = (SH11A+SH11B+SH11C+SH11D+SH11E+SH11Y+SH11Z), HEALTH_INSURANCE=case_when(HEALTH_INSURANCE==0 ~ "None",
-                                                                                                 HEALTH_INSURANCE==1 ~ "SIS",
-                                                                                                 HEALTH_INSURANCE==2 ~ "Essalud",
-                                                                                                 HEALTH_INSURANCE==3 ~ "Others"),
+      HEALTH_INSURANCE = case_when((SH11Z)==1 ~ "None",
+                                   (SH11C)==1 ~ "SIS",
+                                   (SH11A)==1 ~ "Essalud",
+                                   (SH11B|SH11D|SH11E1|SH11Y)==1 ~ "Others"),
       
       LAST_BIRTH = ifelse(V209==0,"MORE THAN 12 MONTHS",
                           ifelse(V209>=1&V209<4,"LESS THAN 12 MONTHS", NA)),
-      
-      
       #EDAD_HIJOS = ifelse(HC1<=12, "menor igual a 12 meses", "mayor de 12 meses"),
-      
-      
-      
     )
-}
+  }
