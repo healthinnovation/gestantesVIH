@@ -102,6 +102,7 @@ dataprep<-function(data){
       IDX94,
       MIDX,
     ) %>% 
+    
     mutate(
       V005 = V005/1000000,
       
@@ -219,5 +220,5 @@ dataprep<-function(data){
       LAST_BIRTH = ifelse(V209==0,"MORE THAN 12 MONTHS",
                           ifelse(V209>=1&V209<4,"LESS THAN 12 MONTHS", NA)),
       #EDAD_HIJOS = ifelse(HC1<=12, "menor igual a 12 meses", "mayor de 12 meses"),
-    )
-  }
+      )
+}
