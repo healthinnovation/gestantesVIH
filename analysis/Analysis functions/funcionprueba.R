@@ -99,6 +99,8 @@ dataprep<-function(data){
       V209,
       V213,
       V214,
+      IDX94,
+      MIDX,
     ) %>% 
     
     mutate(
@@ -188,9 +190,32 @@ dataprep<-function(data){
       
       NUMBER_PRENATAL_VISITS = factor(M14, levels = c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)),
       
+      PRENATAL_ATTENTION_PLACE = case_when((M57E|M57F|M57G)==1 ~ "Minsa",
+                                           (M57I|M57K)==1 ~ "Essalud",
+                                           (M57J)==1 ~ "FF.AA.",
+                                           (M57H|M57M|M57N|M57O|M57R)==1 ~ "Private",
+                                           (M57L|M57P|M57Q|M57S|M57T|M57U|M57V|M57X)==1 ~ "Others"),
+      
+      COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE = case_when((M57G|M57K|M57O|M57P|M57R|M57S|M57T|M57U|M57V|M57X)==1 ~ "Level 1",
+                                                         (M57F|M57H|M57L|M57M|M57N|M57Q)==1 ~ "Level 2",
+                                                         (M57E|M57I|M57J)==1 ~ "Level 3"),
+      
+      HAVE_ITS_SYMPTOMS = (V763B+V763C), HAVE_ITS_SYMPTOMS=case_when(HAVE_ITS_SYMPTOMS==0 ~ "None", 
+                                                                     HAVE_ITS_SYMPTOMS==1~"Only sore/ulcer",
+                                                                     HAVE_ITS_SYMPTOMS==2~"Only flow",
+                                                                     HAVE_ITS_SYMPTOMS==3~"Both"),
+      
+      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = (V774A+V774B+V774C), KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD=case_when(KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==0 ~ "No",
+                                                                                                                   KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==1 ~ "Yes"),                                                                                                                          KNOW_SYMPTON_ETS==1~"AT LEAST 1",
+                                                                                                                                                    
       TOTAL_CHILDREN = factor(V201, levels = c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)),
                                
       UNDER_SIXYEARS_CHILDREN =factor(V208, levels = c(1,2,3,4)),
+      
+      HEALTH_INSURANCE = (SH11A+SH11B+SH11C+SH11D+SH11E+SH11Y+SH11Z), HEALTH_INSURANCE=case_when(HEALTH_INSURANCE==0 ~ "None",
+                                                                                                 HEALTH_INSURANCE==1 ~ "SIS",
+                                                                                                 HEALTH_INSURANCE==2 ~ "Essalud",
+                                                                                                 HEALTH_INSURANCE==3 ~ "Others"),
       
       LAST_BIRTH = ifelse(V209==0,"MORE THAN 12 MONTHS",
                           ifelse(V209>=1&V209<4,"LESS THAN 12 MONTHS", NA)),
