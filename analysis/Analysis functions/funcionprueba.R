@@ -165,6 +165,10 @@ dataprep<-function(data){
       CHECKUP_RULE_OUT_SYPHILIS = as.factor(ifelse(S411G == 1,"Si","No")),
       
       CHECKUP_RULE_OUT_HIV = as.factor(ifelse(S411H == 1,"Si","No")),
+      
+      PRENATAL_CARE_ATTENTION = case_when((M2A|M2B|M2C|M2D)==1 ~ "PROFESSIONAL_OR_TECHNICAL",
+                                          (M2E|M2F|M2G|M2H|M2I|M2J|M2K|M2L|M2M)==1 ~ "OTHER",
+                                          M2N==1 ~ "NOBODY"), ##chequear_si_reponden_envariables de los grupos diferentes
 
       INTENDED_PREGNANCY = factor(M10, levels = c(1,2,3), labels = c("ENTONCES","ESPERAR_MAS","NO_QUERIA_MAS")),
 
