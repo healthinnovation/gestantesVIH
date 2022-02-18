@@ -221,9 +221,6 @@ dataprep<-function(data){
                           ifelse(V209>=1&V209<4,"LESS THAN 12 MONTHS", NA)),
       
       
-      #EDAD_HIJOS = ifelse(HC1<=12, "menor igual a 12 meses", "mayor de 12 meses"),
-      
-      
       
     )
 }
