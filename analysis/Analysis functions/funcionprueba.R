@@ -133,7 +133,7 @@ dataprep<-function(data){
                                                              "PUNO","SAN MARTIN","TACNA","TUMBES","UCAYALI")),
       
       LITERACY = factor(V155, levels = c(0:4), labels = c("CANNOT_READ_AT_ALL","ABLE_TO_READ_ONLY_PARTS_OF_SENTENCE",
-      "ABLE_TO_READ_WHOLE_SENTENCE","NO_CARD_WITH_REQUIRED_LANGUAGE","BLIND/VISUALLY_IMPAIRED")),
+                                        "ABLE_TO_READ_WHOLE_SENTENCE","NO_CARD_WITH_REQUIRED_LANGUAGE","BLIND/VISUALLY_IMPAIRED")),
       
       CURRENT_MARITAL_STATUS = ifelse(HV115==0,"SINGLE", 
                             ifelse(HV115>=1&HV115<=2,"MARRIED/LIVING_TOGETHER", 
@@ -161,27 +161,25 @@ dataprep<-function(data){
                                                                                       KNOW_ETS>=2~"MORE THAN 1"),
       
       KNOW_SYMPTON_ETS = (S816AA+S816AB+S816AC+S816AD+S816AE+S816AF+S816AG+S816AH+S816AI+S816AJ+S816AK+S816AL+S816AW) , KNOW_SYMPTON_ETS=case_when(KNOW_SYMPTON_ETS==0~"NO",
-                                                                                                                                                   KNOW_SYMPTON_ETS==1~"AT LEAST 1",
-                                                                                                                                                   KNOW_SYMPTON_ETS>=2~"MORE THAN 1"),
+                                                                                                                                                   KNOW_SYMPTON_ETS>=1~"YES"),
+                                                                                                                                                   
       
-      CHECKUP_RULE_OUT_SYPHILIS = as.factor(ifelse(S411G == 1,"Si","No")),
+      CHECKUP_RULE_OUT_SYPHILIS = as.factor(ifelse(S411G == 1,"YES","NO")),
       
-      CHECKUP_RULE_OUT_HIV = as.factor(ifelse(S411H == 1,"Si","No")),
+      CHECKUP_RULE_OUT_HIV = as.factor(ifelse(S411H == 1,"YES","NO")),
       
-      #PRENATAL_CARE_ATTENTION = case_when((M2A|M2B|M2C|M2D)==1 ~ "PROFESSIONAL_OR_TECHNICAL",
-                                         # (M2E|M2F|M2G|M2H|M2I|M2J|M2K|M2L|M2M)==1 ~ "OTHER",
-                                          #M2N==1 ~ "NOBODY"), ##chequear_si_reponden_envariables de los grupos diferentes
-
+      PRENATAL_CARE_ATTENTION = case_when((M2A|M2B|M2C|M2D)==1 ~ "PROFESSIONAL_OR_TECHNICAL",
+                                          (M2E|M2F|M2G|M2H|M2I|M2J|M2K|M2L|M2M)==1 ~ "OTHER",
+                                          M2N==1 ~ "NOBODY"),#misma respuesta en 2 var. Hay respuestas en el 1er grupo y 2do grupo, y lo agrupa en el 1ero
+      
       INTENDED_PREGNANCY = factor(M10, levels = c(1,2,3), labels = c("ENTONCES","ESPERAR_MAS","NO_QUERIA_MAS")),
 
-      PHYSICAL_VIOLENCE= factor(D118Y, levels = c(0,1), labels = c("NO","YES")),
+      PHYSICAL_VIOLENCE= factor(D118Y, levels = c(0,1), labels = c("YES","NO")),
       
-      DIAGNOSTED_STD_LAST_12_MONTHS = factor(S411G, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
+      DIAGNOSTED_STD_LAST_12_MONTHS = factor(V763A, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
       
-      GENITAL_SORES_ULCERS_LAST_12_MONTHS = factor(V763B, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
-      
-      #KNOW_TRANSMIT_MOTHER_TO_DS = (V774A+V774B+V774C) , KNOW_TRANSMIT_MOTHER_TO_DS=case_when(KNOW_ETS==0~"NO",KNOW_ETS>=1~"YES"),
-      
+      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = (V774A+V774B+V774C), KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = case_when(KNOW_TRANSMIT_MOTHER_TO_DS!=3~"NO",KNOW_TRANSMIT_MOTHER_TO_DS==3~"YES"),
+  
       HOUSEHOLD_MEMBERS = ifelse(V136<5,"1-4",
                           ifelse(V136>=5&V136<7,"5-6",
                               ifelse(V012>=7,"MORE THAN 7",NA))),
@@ -190,37 +188,34 @@ dataprep<-function(data){
       
       NUMBER_PRENATAL_VISITS = factor(M14, levels = c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)),
       
-      #PRENATAL_ATTENTION_PLACE = case_when((M57E|M57F|M57G)==1 ~ "Minsa",
-       #                                    (M57I|M57K)==1 ~ "Essalud",
-        #                                   (M57J)==1 ~ "FF.AA.",
-         #                                  (M57H|M57M|M57N|M57O|M57R)==1 ~ "Private",
-          #                                 (M57L|M57P|M57Q|M57S|M57T|M57U|M57V|M57X)==1 ~ "Others"),
+      PRENATAL_ATTENTION_PLACE = case_when((M57E|M57F|M57G)==1 ~ "MINSA",
+                                           (M57I|M57K)==1 ~ "ESSALUD",
+                                           (M57J)==1 ~ "FF.AA.",
+                                           (M57H|M57M|M57N|M57O|M57R)==1 ~ "PRIVATE",
+                                           (M57L|M57P|M57Q|M57S|M57T|M57U|M57V|M57X)==1 ~ "OTHERS"),#misma resp en 2 variables. ejm:%>% filter(M57F==1 & M57I==1 & M57L==1)
       
-      #COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE = case_when((M57G|M57K|M57O|M57P|M57R|M57S|M57T|M57U|M57V|M57X)==1 ~ "Level 1",
-       #                                                  (M57F|M57H|M57L|M57M|M57N|M57Q)==1 ~ "Level 2",
-        #                                                 (M57E|M57I|M57J)==1 ~ "Level 3"),
+      COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE = case_when((M57G|M57K|M57O|M57P|M57R|M57S|M57T|M57U|M57V|M57X)==1 ~ "LEVEL 1",
+                                                         (M57F|M57H|M57L|M57M|M57N|M57Q)==1 ~ "LEVEL 2",
+                                                         (M57E|M57I|M57J)==1 ~ "LEVEL 3"),#misma resp en 2 variables. ejm: %>% filter(M57E==1 & M57F==1 & M57G==1)
       
-      #HAVE_ITS_SYMPTOMS = (V763B+V763C), HAVE_ITS_SYMPTOMS=case_when(HAVE_ITS_SYMPTOMS==0 ~ "None", 
-       #                                                              HAVE_ITS_SYMPTOMS==1~"Only sore/ulcer",
-        #                                                             HAVE_ITS_SYMPTOMS==2~"Only flow",
-         #                                                            HAVE_ITS_SYMPTOMS==3~"Both"),
-      
-      #KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = (V774A+V774B+V774C), KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD=case_when(KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==0 ~ "No",
-       #                                                                                                            KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==1 ~ "Yes"),                                                                                                                          KNOW_SYMPTON_ETS==1~"AT LEAST 1",
+      HAVE_ITS_SYMPTOMS=case_when((V763B==1 & V763C==0)~"ONLY SORE/ULCER",
+                                  (V763B==1 & V763C==8)~"ONLY SORE/ULCER",
+                                  (V763B==0 & V763C==1)~"ONLY FLOW",
+                                  (V763B==8 & V763C==1)~"ONLY FLOW",
+                                  (V763B==1 & V763C==1)~"BOTH",
+                                  ((V763B==0 & V763C==0) | (V763B==8 & V763C==8) | (V763B==8 & V763C==0) | (V763B==0 & V763C==8))~"NONE"),
                                                                                                                                                     
       TOTAL_CHILDREN = factor(V201, levels = c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)),
                                
       UNDER_SIXYEARS_CHILDREN =factor(V208, levels = c(1,2,3,4)),
       
-      #HEALTH_INSURANCE = (SH11A+SH11B+SH11C+SH11D+SH11E+SH11Y+SH11Z), HEALTH_INSURANCE=case_when(HEALTH_INSURANCE==0 ~ "None",
-       #                                                                                          HEALTH_INSURANCE==1 ~ "SIS",
-        #                                                                                         HEALTH_INSURANCE==2 ~ "Essalud",
-         #                                                                                        HEALTH_INSURANCE==3 ~ "Others"),
+      HEALTH_INSURANCE=case_when(SH11A==1 ~ "ESSALUD",
+                                 SH11C==1 ~ "SIS",
+                                 (SH11B==1 | SH11D==1 | SH11E==1 | SH11Y==1) ~ "OTHERS",
+                                 SH11Z==1 ~ "NONE"),#misma respuesta en 2 variables,ejm: %>% filter(SH11A==1 & SH11B==1)
       
       LAST_BIRTH = ifelse(V209==0,"MORE THAN 12 MONTHS",
                           ifelse(V209>=1&V209<4,"LESS THAN 12 MONTHS", NA)),
-      
-      
       
     )
 }
