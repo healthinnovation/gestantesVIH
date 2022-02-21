@@ -168,9 +168,9 @@ dataprep<-function(data){
       
       CHECKUP_RULE_OUT_HIV = as.factor(ifelse(S411H == 1,"YES","NO")),
       
-      PRENATAL_CARE_ATTENTION = case_when((M2A|M2B|M2C|M2D)==1 ~ "PROFESSIONAL_OR_TECHNICAL",
-                                          (M2E|M2F|M2G|M2H|M2I|M2J|M2K|M2L|M2M)==1 ~ "OTHER",
-                                          (M2N)==1 ~ "NOBODY"),#misma respuesta en 2 var. Hay respuestas en el 1er grupo y 2do grupo, y lo agrupa en el 1ero
+      PRENATAL_CARE_ATTENTION = case_when((M2A==1 | M2B==1 | M2C==1 | M2D==1) ~ "PROFESSIONAL_OR_TECHNICAL",
+                                          (M2E==1 | M2F==1 | M2G==1 | M2H==1 | M2I==1 | M2J==1 | M2K==1 | M2L==1 | M2M==1) ~ "OTHER",
+                                          (M2N==1) ~ "NOBODY"),#misma respuesta en 2 var. Hay respuestas en el 1er grupo y 2do grupo, y lo agrupa en el 1ero
       
       INTENDED_PREGNANCY = factor(M10, levels = c(1,2,3), labels = c("ENTONCES","ESPERAR_MAS","NO_QUERIA_MAS")),
 
@@ -189,15 +189,15 @@ dataprep<-function(data){
       
       NUMBER_PRENATAL_VISITS = factor(M14, levels = c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)),
       
-      PRENATAL_ATTENTION_PLACE = case_when((M57E|M57F|M57G)==1 ~ "MINSA",
-                                           (M57I|M57K)==1 ~ "ESSALUD",
-                                           (M57J)==1 ~ "FF.AA.",
-                                           (M57H|M57M|M57N|M57O|M57R)==1 ~ "PRIVATE",
-                                           (M57L|M57P|M57Q|M57S|M57T|M57U|M57V|M57X)==1 ~ "OTHERS"),#misma resp en 2 variables. ejm:%>% filter(M57F==1 & M57I==1 & M57L==1)
+      PRENATAL_ATTENTION_PLACE = case_when((M57E==1 | M57F==1 | M57G==1) ~ "MINSA",
+                                           (M57I==1 | M57K==1) ~ "ESSALUD",
+                                           (M57J==1) ~ "FF.AA.",
+                                           (M57H==1 | M57M==1 | M57N==1 | M57O==1 | M57R==1) ~ "PRIVATE",
+                                           (M57L==1 | M57P==1 | M57Q==1 | M57S==1 | M57T==1 | M57U==1 | M57V==1 | M57X==1) ~ "OTHERS"),#misma resp en 2 variables. ejm:%>% filter(M57F==1 & M57I==1 & M57L==1)
       
-      COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE = case_when((M57G|M57K|M57O|M57P|M57R|M57S|M57T|M57U|M57V|M57X)==1 ~ "LEVEL 1",
-                                                         (M57F|M57H|M57L|M57M|M57N|M57Q)==1 ~ "LEVEL 2",
-                                                         (M57E|M57I|M57J)==1 ~ "LEVEL 3"),#misma resp en 2 variables. ejm: %>% filter(M57E==1 & M57F==1 & M57G==1)
+      COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE = case_when((M57G==1 | M57K==1 | M57O==1 | M57P==1 | M57R==1 | M57S==1 | M57T==1 | M57U==1 | M57V==1 | M57X==1) ~ "LEVEL 1",
+                                                         (M57F==1 | M57H==1 | M57L==1 | M57M==1 | M57N==1 | M57Q==1) ~ "LEVEL 2",
+                                                         (M57E==1 | M57I==1 | M57J==1) ~ "LEVEL 3"),#misma resp en 2 variables. ejm: %>% filter(M57E==1 & M57F==1 & M57G==1)
       
       HAVE_ITS_SYMPTOMS=case_when((V763B==1 & V763C==0)~"ONLY SORE/ULCER",
                                   (V763B==1 & V763C==8)~"ONLY SORE/ULCER",
