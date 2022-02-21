@@ -170,7 +170,7 @@ dataprep<-function(data){
       
       PRENATAL_CARE_ATTENTION = case_when((M2A|M2B|M2C|M2D)==1 ~ "PROFESSIONAL_OR_TECHNICAL",
                                           (M2E|M2F|M2G|M2H|M2I|M2J|M2K|M2L|M2M)==1 ~ "OTHER",
-                                          M2N==1 ~ "NOBODY"),#misma respuesta en 2 var. Hay respuestas en el 1er grupo y 2do grupo, y lo agrupa en el 1ero
+                                          (M2N)==1 ~ "NOBODY"),#misma respuesta en 2 var. Hay respuestas en el 1er grupo y 2do grupo, y lo agrupa en el 1ero
       
       INTENDED_PREGNANCY = factor(M10, levels = c(1,2,3), labels = c("ENTONCES","ESPERAR_MAS","NO_QUERIA_MAS")),
 
@@ -178,8 +178,9 @@ dataprep<-function(data){
       
       DIAGNOSTED_STD_LAST_12_MONTHS = factor(V763A, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
       
-      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = (V774A+V774B+V774C), KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = case_when(KNOW_TRANSMIT_MOTHER_TO_DS!=3~"NO",KNOW_TRANSMIT_MOTHER_TO_DS==3~"YES"),
-  
+      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = (V774A+V774B+V774C) , 
+      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = case_when(KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD!=3~"NO",KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==3~"YES"),
+      
       HOUSEHOLD_MEMBERS = ifelse(V136<5,"1-4",
                           ifelse(V136>=5&V136<7,"5-6",
                               ifelse(V012>=7,"MORE THAN 7",NA))),
