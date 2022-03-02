@@ -1,0 +1,41 @@
+library(tidyverse)
+data<-read.csv("./data/data_analysis.csv")
+head(data)
+names(data)
+
+#https://fhernanb.github.io/libro_regresion/multicoli.html
+#https://www.statology.org/variance-inflation-factor-r/
+
+data %>% select( "CASEID","year","IDX94","V005"
+                  ,"EDAD_MADRE"
+                  ,"WEALTH_INDEX"                              
+                  ,"RELATIONSHIP_HOUSEHOLD_HEAD"               
+                  ,"TYPE_PLACE_RESIDENCE"                      
+                  ,"ETHNICITY"                                 
+                  ,"DEPARTAMEN"                                
+                  ,"LITERACY"                                  
+                  ,"CURRENT_MARITAL_STATUS"                    
+                  ,"EDU_LEVEL"                                 
+                  ,"NATURAL_REGION"                            
+                  ,"PARTNER_APPROVE_DISAPPROVE_FAMILY_PLANNING"
+                  ,"PARTNER_EDU_LEVEL"                         
+                  ,"CAN_SOMETHING_BE_DONE_PREVENT_AIDS"        
+                  ,"KNOW_ETS"                                  
+                  ,"KNOW_SYMPTON_ETS"                          
+                  ,"CHECKUP_RULE_OUT_SYPHILIS"                 
+                  ,"CHECKUP_RULE_OUT_HIV"                      
+                  ,"PRENATAL_CARE_ATTENTION"                   
+                  ,"INTENDED_PREGNANCY"                        
+                  ,"PHYSICAL_VIOLENCE"                         
+                  ,"DIAGNOSTED_STD_LAST_12_MONTHS"             
+                  ,"KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD"     
+                  ,"HOUSEHOLD_MEMBERS"                         
+                  ,"FIRST_PRENATAL_VISIT"                      
+                  ,"NUMBER_PRENATAL_VISITS"                    
+                  ,"PRENATAL_ATTENTION_PLACE"                  
+                  ,"COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE"    
+                  ,"HAVE_ITS_SYMPTOMS"                         
+                  ,"TOTAL_CHILDREN"                            
+                  ,"UNDER_SIXYEARS_CHILDREN"                   
+                  ,"HEALTH_INSURANCE"       
+                  ,"LAST_BIRTH")

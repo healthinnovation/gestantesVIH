@@ -106,7 +106,7 @@ dataprep<-function(data){
     mutate(
       V005 = V005/1000000,
       
-      EDAD_MADRE = ifelse(V012<25,"15-24a",
+      AGE_MOTHER = ifelse(V012<25,"15-24a",
                           ifelse(V012>=25&V012<30,"25-30a",
                                  ifelse(V012>=30&V012<35,"30-35a",
                                         ifelse(V012>=35,"35 a mas",NA)))),
