@@ -59,13 +59,16 @@ length(unique(data$CASEID))
 # Filtrando mujeres que tienen un hijo en el último año y primer hijo nacido en en el último año
 data <- data %>% filter(LAST_BIRTH=='LESS THAN 12 MONTHS' & IDX94==1)
 
+write.csv(data, 'data.csv')
 #--- ID unicos
 length(data$CASEID)
 length(unique(data$CASEID))
 
 data_dupli<-data %>% filter(duplicated(CASEID)) %>% arrange(CASEID,desc(CASEID))
 
+length(data_dupli)
 length(unique(data_dupli))
+
 ########################################
 #-------------- Imputacion ------------
 ########################################
