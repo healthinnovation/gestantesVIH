@@ -1,0 +1,24 @@
+---
+title: "Modelos-efectos-mixtos"
+author: "Jazmín Qquellon"
+date: "13/3/2022"
+output: console
+---
+## Cargando paquetes
+
+```{r, message=F, warning=F, error=F}
+library(tidyverse)
+library(haven)
+library(gtsummary)
+library(survey)
+library(stringr)
+library(dplyr)
+```
+
+## Selección de variables antes de convertir la data a un objeto survey
+```{r}
+df_gestantes <- read_csv("~/GitHub/gestantesVIH/data/data_analysis.csv") %>% 
+  select(CHECKUP_RULE_OUT_HIV, AGE_MOTHER, EDU_LEVEL, CURRENT_MARITAL_STATUS, RELATIONSHIP_HOUSEHOLD_HEAD, ETHNICITY, WEALTH_INDEX, TYPE_PLACE_RESIDENCE, NATURAL_REGION, HOUSEHOLD_MEMBERS, KNOW_ETS, KNOW_SYMPTON_ETS, INTENDED_PREGNANCY, FIRST_PRENATAL_VISIT, NUMBER_PRENATAL_VISITS, HEALTH_INSURANCE, HAVE_ITS_SYMPTOMS, LAST_BIRTH, IDX94, V005, V001, V022)
+
+```
+## La data debe filtrarse solo para mujeres que tienen un hijo en el último año (LAST_BIRTH==LESS THAN 12 MONTHS) y solo para el primer hijo nacido en en el último año (IDX94==1). Además para que funcione mi modelo en STATA tuve que excluir 3 estratos (63,206 y 2013), verificar si esto sucede en R también. 
