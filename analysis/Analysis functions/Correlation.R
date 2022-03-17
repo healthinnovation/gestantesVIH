@@ -44,6 +44,14 @@ data <- data_read %>% select( "CASEID","year","IDX94","V005"
 # ----------- Análisis exploratorio de datos ---------------
 ############################################################
 
+# Filtrando mujeres que tienen un hijo en el último año y primer hijo nacido en en el último año
+data <- data %>% filter(LAST_BIRTH=='LESS THAN 12 MONTHS' & IDX94==1) %>% mutate( ID = paste(CASEID,year,sep = "_"))
+#write.csv(data,'./data/datafinal.csv')
+
+#--- ID unicos
+length(data$ID)
+length(unique(data$ID))
+
 #----------------------- Tipo de datos
 glimpse(data)
 #variable respuesta : CHECKUP_RULE_OUT_HIV  
@@ -52,22 +60,6 @@ glimpse(data)
 map_dbl(data, .f = function(x){round(sum(is.na(x)*100/length(x)),2)})
 names(data[map_dbl(data, .f = function(x){round(sum(is.na(x)*100/length(x)),2)})>0])
 
-#--- ID unicos
-length(data$CASEID)
-length(unique(data$CASEID))
-
-# Filtrando mujeres que tienen un hijo en el último año y primer hijo nacido en en el último año
-data <- data %>% filter(LAST_BIRTH=='LESS THAN 12 MONTHS' & IDX94==1)
-
-write.csv(data, 'data.csv')
-#--- ID unicos
-length(data$CASEID)
-length(unique(data$CASEID))
-
-data_dupli<-data %>% filter(duplicated(CASEID)) %>% arrange(CASEID,desc(CASEID))
-
-length(data_dupli)
-length(unique(data_dupli))
 
 ########################################
 #-------------- Imputacion ------------
@@ -109,10 +101,6 @@ data$CHECKUP_RULE_OUT_SYPHILIS[is.na(data$CHECKUP_RULE_OUT_SYPHILIS)] <- 'YES'
 #CHECKUP_RULE_OUT_HIV 
 table(data$CHECKUP_RULE_OUT_HIV)
 data$CHECKUP_RULE_OUT_HIV[is.na(data$CHECKUP_RULE_OUT_HIV)] <- 'YES'
-
-#PRENATAL_CARE_ATTENTION 
-table(data$PRENATAL_CARE_ATTENTION)
-data$PRENATAL_CARE_ATTENTION[is.na(data$PRENATAL_CARE_ATTENTION)] <- 'PROFESSIONAL_OR_TECHNICAL' # other menos proporcion
 
 #INTENDED_PREGNANCY
 table(data$INTENDED_PREGNANCY)
@@ -177,7 +165,7 @@ library(fastDummies)
 ######################################
 #--------------Correlacion------------
 ######################################
-data %>% cor(method = "spearman") %>% round(digits=2)
+data %>% cor() %>% round(digits=2)
 
 library(DataExplorer)
 plot_correlation(
