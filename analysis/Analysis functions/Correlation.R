@@ -6,7 +6,7 @@ names(data_read)
 #https://fhernanb.github.io/libro_regresion/multicoli.html
 #https://www.statology.org/variance-inflation-factor-r/
 
-data <- data_read %>% select( "CASEID","year","IDX94","V005"
+data <- data_read %>% select( "CASEID","year","IDX94","V005", "V001", "V022"
                   ,"AGE_MOTHER"
                   ,"WEALTH_INDEX"                              
                   ,"RELATIONSHIP_HOUSEHOLD_HEAD"               
@@ -41,10 +41,10 @@ data <- data_read %>% select( "CASEID","year","IDX94","V005"
                   ,"LAST_BIRTH")
 
 ############################################################
-# ----------- Análisis exploratorio de datos ---------------
+# ----------- An?lisis exploratorio de datos ---------------
 ############################################################
 
-# Filtrando mujeres que tienen un hijo en el último año y primer hijo nacido en en el último año
+# Filtrando mujeres que tienen un hijo en el ?ltimo a?o y primer hijo nacido en en el ?ltimo a?o
 data <- data %>% filter(LAST_BIRTH=='LESS THAN 12 MONTHS' & IDX94==1) %>% mutate( ID = paste(CASEID,year,sep = "_"))
 #write.csv(data,'./data/datafinal.csv')
 
@@ -171,7 +171,7 @@ library(DataExplorer)
 plot_correlation(
   data = data,
   type = "continuous",
-  title = "Matriz de correlación variables continuas",
+  title = "Matriz de correlaci?n variables continuas",
   theme_config = list(legend.position = "none",
                       plot.title = element_text(size = 16, face = "bold"),
                       axis.title = element_blank(),

@@ -161,7 +161,8 @@ dataprep<-function(data){
                                                                                       KNOW_ETS>=2~"MORE THAN 1"),
       
       KNOW_SYMPTON_ETS = (S816AA+S816AB+S816AC+S816AD+S816AE+S816AF+S816AG+S816AH+S816AI+S816AJ+S816AK+S816AL+S816AW) , KNOW_SYMPTON_ETS=case_when(KNOW_SYMPTON_ETS==0~"NO",
-                                                                                                                                                   KNOW_SYMPTON_ETS>=1~"YES"),
+                                                                                                                                                   KNOW_SYMPTON_ETS==1~"AT LEAST 1",
+                                                                                                                                                   KNOW_SYMPTON_ETS>=2~"MORE THAN 1"),
                                                                                                                                                    
       
       CHECKUP_RULE_OUT_SYPHILIS = as.factor(ifelse(S411G == 1,"YES","NO")),
@@ -179,8 +180,9 @@ dataprep<-function(data){
       DIAGNOSTED_STD_LAST_12_MONTHS = factor(V763A, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
       
       KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = (V774A+V774B+V774C) , 
-      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = case_when(KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD!=3~"NO",KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==3~"YES"),
-      
+      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = case_when(KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==0~"NO",
+                                                        KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD>=1~"YES"),
+        
       HOUSEHOLD_MEMBERS = ifelse(V136<5,"1-4",
                           ifelse(V136>=5&V136<7,"5-6",
                               ifelse(V012>=7,"MORE THAN 7",NA))),
