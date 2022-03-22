@@ -47,8 +47,13 @@ df_gestantes2020<-
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
   #left_join(children, by = "CASEID") %>%
-  mutate(year = "2020")
-
+  mutate(year = "2020", 
+         V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ "4",
+                        (V131==2) ~ "3",
+                        (V131==1) ~ "2",
+                         (V131==10) ~ "1",
+                          (V131==11 | V131==12) ~ "5"))
+               
 dim(df_gestantes2020)  
 ```
 
@@ -78,7 +83,12 @@ df_gestantes2019<-
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
   #left_join(children, by = "CASEID") %>%
-  mutate(year = "2019")
+  mutate(year = "2019",
+         V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ "4",
+                        (V131==2) ~ "3",
+                        (V131==1) ~ "2",
+                         (V131==10) ~ "1",
+                          (V131==11 | V131==12) ~ "5"))
 
 dim(df_gestantes2019)  
 
@@ -111,7 +121,12 @@ df_gestantes2018<-
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
  #left_join(children, by = "CASEID") %>%
   
-  mutate(year = "2018")
+  mutate(year = "2018",
+         V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ "4",
+                        (V131==2) ~ "3",
+                        (V131==1) ~ "2",
+                         (V131==10) ~ "1",
+                          (V131==11 | V131==12) ~ "5"))
 
 dim(df_gestantes2018)  
 
