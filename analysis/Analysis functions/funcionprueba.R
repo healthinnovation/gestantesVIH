@@ -89,13 +89,16 @@ dataprep<-function(data){
       V201,
       V208,
       V211,
-      SH11A,
-      SH11B,
-      SH11C,
-      SH11D,
-      SH11E,
-      SH11Y,
-      SH11Z,
+      V481,
+      V481A,
+      V481B,
+      V481C,
+      V481D,
+      V481E,
+      V481F,
+      V481G,
+      V481H,
+      V481X,
       V209,
       V213,
       V214,
@@ -120,11 +123,11 @@ dataprep<-function(data){
       
       TYPE_PLACE_RESIDENCE = ifelse(V025==1,"URBAN","RURAL"),
       
-      ETHNICITY = ifelse(V131==10,"SPANISH",
-                                ifelse(V131==1, "QUECHUA",
-                                          ifelse(V131==2, "AIMARA",
-                                                 ifelse(V131>=3&V131<=9, "AMAZONIAN",
-                                                        ifelse(V131>=11,"FOREIGNER",NA))))),
+      ETHNICITY = ifelse(V131==1,"SPANISH",
+                                ifelse(V131==2, "QUECHUA",
+                                          ifelse(V131==3, "AIMARA",
+                                                 ifelse(V131==4, "OTHER INDIGENOUS",
+                                                        ifelse(V131==5,"FOREIGNER",NA))))),
       
       DEPARTAMEN = factor(V024, levels = c(1:25), labels = c("AMAZONAS","ANCASH","APURIMAC","AREQUIPA","AYACUCHO",
                                                              "CAJAMARCA","CALLAO","CUSCO","HUANCAVELICA","HUANUCO",
@@ -212,10 +215,12 @@ dataprep<-function(data){
                                
       UNDER_SIXYEARS_CHILDREN =factor(V208, levels = c(1,2,3,4)),
       
-      HEALTH_INSURANCE=case_when(SH11A==1 ~ "ESSALUD",
-                                 SH11C==1 ~ "SIS",
-                                 (SH11B==1 | SH11D==1 | SH11E==1 | SH11Y==1) ~ "OTHERS",
-                                 SH11Z==1 ~ "NONE"),#misma respuesta en 2 variables,ejm: %>% filter(SH11A==1 & SH11B==1)
+      #HEALTH_INSURANCE=case_when(SH11A==1 ~ "ESSALUD",
+                                # SH11C==1 ~ "SIS",
+                                 #(SH11B==1 | SH11D==1 | SH11E==1 | SH11Y==1) ~ "OTHERS",
+                                 #SH11Z==1 ~ "NONE"),#misma respuesta en 2 variables,ejm: %>% filter(SH11A==1 & SH11B==1)
+      HEALTH_INSURANCE=case_when((V481==0)~"NO",
+                                 (V481==1)~"YES"),
       
       LAST_BIRTH = ifelse(V209==0,"MORE THAN 12 MONTHS",
                           ifelse(V209>=1&V209<4,"LESS THAN 12 MONTHS", NA)),
