@@ -108,7 +108,7 @@ data$INTENDED_PREGNANCY[is.na(data$INTENDED_PREGNANCY)] <- 'ENTONCES'
 
 #PHYSICAL_VIOLENCE  
 table(data$PHYSICAL_VIOLENCE)
-data$PHYSICAL_VIOLENCE[is.na(data$PHYSICAL_VIOLENCE)] <- 'YES'
+data$PHYSICAL_VIOLENCE[is.na(data$PHYSICAL_VIOLENCE)] <- 'NO'
 
 #DIAGNOSTED_STD_LAST_12_MONTHS 
 table(data$DIAGNOSTED_STD_LAST_12_MONTHS)
@@ -120,11 +120,11 @@ data$KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD[is.na(data$KNOW_HIV_TRANSMISSION_MOTH
 
 #PRENATAL_ATTENTION_PLACE
 table(data$PRENATAL_ATTENTION_PLACE)
-data$PRENATAL_ATTENTION_PLACE[is.na(data$PRENATAL_ATTENTION_PLACE)] <- 'MINSA'  # FF.AA. dentro de others
+data = data %>% mutate (PRENATAL_ATTENTION_PLACE = recode_factor(PRENATAL_ATTENTION_PLACE,FF.AA. = 'OTHERS', NULL = 'OTHERS'))
   
 #COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE
 table(data$COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE)
-data$COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE[is.na(data$COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE)] <- 'ENTONCES'
+data$COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE[is.na(data$COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE)] <- 'LEVEL 1'
 
 #HAVE_ITS_SYMPTOMS  
 table(data$HAVE_ITS_SYMPTOMS)
@@ -132,7 +132,7 @@ data$HAVE_ITS_SYMPTOMS[is.na(data$HAVE_ITS_SYMPTOMS)] <- 'NONE'
 
 #HEALTH_INSURANCE
 table(data$HEALTH_INSURANCE)
-data$HEALTH_INSURANCE[is.na(data$HEALTH_INSURANCE)] <- 'SIS'
+data$HEALTH_INSURANCE[is.na(data$HEALTH_INSURANCE)] <- 'OTHERS'
 
 ##### VARIABLES NUMERICAS###########
 
@@ -147,6 +147,8 @@ data$NUMBER_PRENATAL_VISITS[is.na(data$NUMBER_PRENATAL_VISITS)] <- median(data$N
 ##############################################
 #------------ Variable Respuesta ------------
 ##############################################
+data$CHECKUP_RULE_OUT_HIV[is.na(data$CHECKUP_RULE_OUT_HIV)] <- 'YES'
+
 ggplot(data = data, aes(x = CHECKUP_RULE_OUT_HIV , y = ..count.., fill = CHECKUP_RULE_OUT_HIV )) +
   geom_bar() +
   scale_fill_manual(values = c("gray50", "orangered2")) +
