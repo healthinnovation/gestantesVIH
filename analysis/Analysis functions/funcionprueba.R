@@ -89,13 +89,16 @@ dataprep<-function(data){
       V201,
       V208,
       V211,
-      SH11A,
-      SH11B,
-      SH11C,
-      SH11D,
-      SH11E,
-      SH11Y,
-      SH11Z,
+      V481,
+      V481A,
+      V481B,
+      V481C,
+      V481D,
+      V481E,
+      V481F,
+      V481G,
+      V481H,
+      V481X,
       V209,
       V213,
       V214,
@@ -120,11 +123,11 @@ dataprep<-function(data){
       
       TYPE_PLACE_RESIDENCE = ifelse(V025==1,"URBAN","RURAL"),
       
-      ETHNICITY = ifelse(V131==10,"SPANISH",
-                                ifelse(V131==1, "QUECHUA",
-                                          ifelse(V131==2, "AIMARA",
-                                                 ifelse(V131>=3&V131<=9, "AMAZONIAN",
-                                                        ifelse(V131>=11,"FOREIGNER",NA))))),
+      ETHNICITY = ifelse(V131==1,"SPANISH",
+                                ifelse(V131==2, "QUECHUA",
+                                          ifelse(V131==3, "AIMARA",
+                                                 ifelse(V131==4, "OTHER INDIGENOUS",
+                                                        ifelse(V131==5,"FOREIGNER",NA))))),
       
       DEPARTAMEN = factor(V024, levels = c(1:25), labels = c("AMAZONAS","ANCASH","APURIMAC","AREQUIPA","AYACUCHO",
                                                              "CAJAMARCA","CALLAO","CUSCO","HUANCAVELICA","HUANUCO",
@@ -161,7 +164,8 @@ dataprep<-function(data){
                                                                                       KNOW_ETS>=2~"MORE THAN 1"),
       
       KNOW_SYMPTON_ETS = (S816AA+S816AB+S816AC+S816AD+S816AE+S816AF+S816AG+S816AH+S816AI+S816AJ+S816AK+S816AL+S816AW) , KNOW_SYMPTON_ETS=case_when(KNOW_SYMPTON_ETS==0~"NO",
-                                                                                                                                                   KNOW_SYMPTON_ETS>=1~"YES"),
+                                                                                                                                                   KNOW_SYMPTON_ETS==1~"AT LEAST 1",
+                                                                                                                                                   KNOW_SYMPTON_ETS>=2~"MORE THAN 1"),
                                                                                                                                                    
       
       CHECKUP_RULE_OUT_SYPHILIS = as.factor(ifelse(S411G == 1,"YES","NO")),
@@ -179,8 +183,9 @@ dataprep<-function(data){
       DIAGNOSTED_STD_LAST_12_MONTHS = factor(V763A, levels = c(0,1,8), labels = c("NO","YES","DONT_KNOW")),
       
       KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = (V774A+V774B+V774C) , 
-      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = case_when(KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD!=3~"NO",KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==3~"YES"),
-      
+      KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD = case_when(KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD==0~"NO",
+                                                        KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD>=1~"YES"),
+        
       HOUSEHOLD_MEMBERS = ifelse(V136<5,"1-4",
                           ifelse(V136>=5&V136<7,"5-6",
                               ifelse(V012>=7,"MORE THAN 7",NA))),
@@ -210,10 +215,12 @@ dataprep<-function(data){
                                
       UNDER_SIXYEARS_CHILDREN =factor(V208, levels = c(1,2,3,4)),
       
-      HEALTH_INSURANCE=case_when(SH11A==1 ~ "ESSALUD",
-                                 SH11C==1 ~ "SIS",
-                                 (SH11B==1 | SH11D==1 | SH11E==1 | SH11Y==1) ~ "OTHERS",
-                                 SH11Z==1 ~ "NONE"),#misma respuesta en 2 variables,ejm: %>% filter(SH11A==1 & SH11B==1)
+      #HEALTH_INSURANCE=case_when(SH11A==1 ~ "ESSALUD",
+                                # SH11C==1 ~ "SIS",
+                                 #(SH11B==1 | SH11D==1 | SH11E==1 | SH11Y==1) ~ "OTHERS",
+                                 #SH11Z==1 ~ "NONE"),#misma respuesta en 2 variables,ejm: %>% filter(SH11A==1 & SH11B==1)
+      HEALTH_INSURANCE=case_when((V481==0)~"NO",
+                                 (V481==1)~"YES"),
       
       LAST_BIRTH = ifelse(V209==0,"MORE THAN 12 MONTHS",
                           ifelse(V209>=1&V209<4,"LESS THAN 12 MONTHS", NA)),
