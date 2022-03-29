@@ -1,52 +1,13 @@
 library(tidyverse)
-data_read<-read.csv("./data/data_analysis.csv")
+data_read<-read.csv("./data/datafinal.csv")
 head(data_read)
 names(data_read)
 
 #https://fhernanb.github.io/libro_regresion/multicoli.html
 #https://www.statology.org/variance-inflation-factor-r/
 
-data <- data_read %>% select( "CASEID","year","IDX94","V005", "V001", "V022"
-                  ,"AGE_MOTHER"
-                  ,"WEALTH_INDEX"                              
-                  ,"RELATIONSHIP_HOUSEHOLD_HEAD"               
-                  ,"TYPE_PLACE_RESIDENCE"                      
-                  ,"ETHNICITY"                                 
-                  ,"DEPARTAMEN"                                
-                  ,"LITERACY"                                  
-                  ,"CURRENT_MARITAL_STATUS"                    
-                  ,"EDU_LEVEL"                                 
-                  ,"NATURAL_REGION"                            
-                  ,"PARTNER_APPROVE_DISAPPROVE_FAMILY_PLANNING"
-                  ,"PARTNER_EDU_LEVEL"                         
-                  ,"CAN_SOMETHING_BE_DONE_PREVENT_AIDS"        
-                  ,"KNOW_ETS"                                  
-                  ,"KNOW_SYMPTON_ETS"                          
-                  ,"CHECKUP_RULE_OUT_SYPHILIS"                 
-                  ,"CHECKUP_RULE_OUT_HIV"                      
-                  ,"PRENATAL_CARE_ATTENTION"                   
-                  ,"INTENDED_PREGNANCY"                        
-                  ,"PHYSICAL_VIOLENCE"                         
-                  ,"DIAGNOSTED_STD_LAST_12_MONTHS"             
-                  ,"KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD"     
-                  ,"HOUSEHOLD_MEMBERS"                         
-                  ,"FIRST_PRENATAL_VISIT"                      
-                  ,"NUMBER_PRENATAL_VISITS"                    
-                  ,"PRENATAL_ATTENTION_PLACE"                  
-                  ,"COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE"    
-                  ,"HAVE_ITS_SYMPTOMS"                         
-                  ,"TOTAL_CHILDREN"                            
-                  ,"UNDER_SIXYEARS_CHILDREN"                   
-                  ,"HEALTH_INSURANCE"       
-                  ,"LAST_BIRTH")
-
-############################################################
-# ----------- An?lisis exploratorio de datos ---------------
-############################################################
-
-# Filtrando mujeres que tienen un hijo en el ?ltimo a?o y primer hijo nacido en en el ?ltimo a?o
-data <- data %>% filter(LAST_BIRTH=='LESS THAN 12 MONTHS' & IDX94==1) %>% mutate( ID = paste(CASEID,year,sep = "_"))
-#write.csv(data,'./data/datafinal.csv')
+#se elimina la columna índice
+data <- data_read %>% select(-X)
 
 #--- ID unicos
 length(data$ID)
