@@ -61,3 +61,25 @@ df4 <- df %>% mutate(
 
 
 df4$maritalstatus_ci
+
+#NATIVE LANGUAGE: ETHNICITY
+df4 <- df %>% mutate(
+  native_language_ci = map(.x = datasvy,
+                         .f = ~svymean(~as.factor(ETHNICITY), design = .x, na.rm = T, vartype = c("se","ci")) %>% 
+                           confint() %>% 
+                           as.data.frame() %>% 
+                           rownames_to_column(var = "var")))
+
+
+df4$native_language_ci
+
+#KNOWS STD: KNOWS ETS
+df4 <- df %>% mutate(
+  knowets_ci = map(.x = datasvy,
+                           .f = ~svymean(~as.factor(KNOW_ETS), design = .x, na.rm = T, vartype = c("se","ci")) %>% 
+                             confint() %>% 
+                             as.data.frame() %>% 
+                             rownames_to_column(var = "var")))
+
+
+df4$knowets_ci
