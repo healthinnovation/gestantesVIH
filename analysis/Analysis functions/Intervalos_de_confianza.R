@@ -28,6 +28,7 @@ options(survey.lonely.psu="remove")
 df
 head(df$data)
 
+#AGE MOTHER
 df2 <- df %>% mutate(
   agemother_ci = map(.x = datasvy,
                        .f = ~svymean(~as.factor(AGE_MOTHER), design = .x, na.rm = T, vartype = c("se","ci")) %>% 
@@ -38,15 +39,25 @@ df2 <- df %>% mutate(
 
 df2$agemother_ci
 
-"
-data = data %>% mutate (INSTITU = recode_factor(PRENATAL_ATTENTION_PLACE,FF.AA. = 'OTHERS'))
 
-table(data$INSTITU)
-table(data$INSTITU,data$year)
+#EDUCATION LEVEL
+df3 <- df %>% mutate(
+  edulevel_ci = map(.x = datasvy,
+                     .f = ~svymean(~as.factor(EDU_LEVEL), design = .x, na.rm = T, vartype = c("se","ci")) %>% 
+                       confint() %>% 
+                       as.data.frame() %>% 
+                       rownames_to_column(var = "var")))
 
-data %>% group_by(year) %>% summarise(MEDIANA = median(FIRST_PRENATAL_VISIT, na.rm = T))
 
-data %>% group_by(year) %>% summarise(MEDIANA = median(NUMBER_PRENATAL_VISITS, na.rm = T))
+df3$edulevel_ci
 
-table(data$HOUSEHOLD_MEMBERS, data$year)
-"
+#MARITAL STATUS
+df4 <- df %>% mutate(
+  maritalstatus_ci = map(.x = datasvy,
+                    .f = ~svymean(~as.factor(CURRENT_MARITAL_STATUS), design = .x, na.rm = T, vartype = c("se","ci")) %>% 
+                      confint() %>% 
+                      as.data.frame() %>% 
+                      rownames_to_column(var = "var")))
+
+
+df4$maritalstatus_ci
