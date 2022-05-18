@@ -18,6 +18,7 @@ data <- data_read %>% select( "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHI
 
 str(data)
 summary(data)
+glimpse(data)
 
 ##################################
 # ANALISIS UNIVARIADO: NUM?RICAS
