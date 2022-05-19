@@ -1,6 +1,7 @@
 library(tidyverse)
 library(scales)
 library(ggplot2)
+library(caret)
 data_read<-read.csv("./data/datafinal.csv")
 head(data_read)
 names(data_read)
@@ -727,3 +728,55 @@ ggplot(plot_data, aes(x = factor(LAST_BIRTH), fill = factor(LAST_BIRTH), y = pro
   )+
   ggtitle("Proporción de hijos de menos de 12 meses")
 
+############################
+# PRE-PROCESAMIENTO
+############################
+
+
+data1 <- data %>% select( "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE",                       
+                              "ETHNICITY", "DEPARTAMEN", "EDU_LEVEL", "NATURAL_REGION", "PARTNER_EDU_LEVEL", "KNOW_ETS", 
+                              "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_SYPHILIS", "CHECKUP_RULE_OUT_HIV",  "INTENDED_PREGNANCY", 
+                              "PHYSICAL_VIOLENCE", "HOUSEHOLD_MEMBERS", "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", 
+                              "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", "TOTAL_CHILDREN", 
+                              "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE")
+
+
+data2 <- data1 %>% mutate(WEALTH_INDEX = case_when(WEALTH_INDEX == 'MIDDLE' ~ 'MIDDLE',
+                                           WEALTH_INDEX == 'POOR' ~ 'POOR',
+                                           WEALTH_INDEX == 'POOREST' ~ 'POOREST',
+                                           WEALTH_INDEX == 'RICH' ~ 'RICH-RICHEST',
+                                           WEALTH_INDEX == 'RICHEST' ~ 'RICH-RICHEST'),
+                 
+                 RELATIONSHIP_HOUSEHOLD_HEAD = case_when(RELATIONSHIP_HOUSEHOLD_HEAD == 'DAUGTHER/SON' ~ 'DAUGTHER/SON',
+                                                         RELATIONSHIP_HOUSEHOLD_HEAD == 'HEAD' ~ 'HEAD-OTHER',
+                                                         RELATIONSHIP_HOUSEHOLD_HEAD == 'OTHER' ~ 'HEAD-OTHER',
+                                                         RELATIONSHIP_HOUSEHOLD_HEAD == 'WIFE' ~ 'WIFE'),
+                 ETHNICITY = case_when(ETHNICITY == 'SPANISH' ~ 'SPANISH',
+                                       ETHNICITY != 'SPANISH' ~ 'NO_SPANISH'),
+                 
+                 EDU_LEVEL = case_when(EDU_LEVEL == 'HIGHER' ~ 'HIGHER',
+                                       EDU_LEVEL == 'NONE/PRESCHOOL' ~ 'NONE/PRESCHOOL-PRIMARY',
+                                       EDU_LEVEL == 'PRIMARY' ~ 'NONE/PRESCHOOL-PRIMARY',
+                                       EDU_LEVEL == 'SECONDARY' ~ 'SECONDARY'),
+                 
+                 PARTNER_EDU_LEVEL = case_when(PARTNER_EDU_LEVEL == 'HIGHER' ~ 'HIGHER',
+                                               PARTNER_EDU_LEVEL == 'NONE/PRESCHOOL' ~ 'NONE/PRESCHOOL-PRIMARY',
+                                               PARTNER_EDU_LEVEL == 'PRIMARY' ~ 'NONE/PRESCHOOL-PRIMARY',
+                                               PARTNER_EDU_LEVEL == 'SECONDARY' ~ 'SECONDARY'),
+                 
+                 PRENATAL_ATTENTION_PLACE = case_when(PRENATAL_ATTENTION_PLACE == 'MINSA' ~ 'MINSA',
+                                                      PRENATAL_ATTENTION_PLACE != 'MINSA' ~ 'NO_MINSA'))
+
+# GET DUMMIES
+
+dummy <- caret::dummyVars(~ ., data = data2, fullRank = TRUE)
+
+dummy
+#> Dummy Variable Object
+#> 
+#> Formula: ~.
+#> 2 variables, 1 factors
+#> Variables and levels will be separated by '.'
+#> A full rank encoding is used
+
+predict(dummy, data2)
