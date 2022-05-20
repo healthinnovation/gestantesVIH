@@ -734,14 +734,17 @@ ggplot(plot_data, aes(x = factor(LAST_BIRTH), fill = factor(LAST_BIRTH), y = pro
 
 
 data1 <- data %>% select( "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE",                       
-                              "ETHNICITY", "DEPARTAMEN", "EDU_LEVEL", "NATURAL_REGION", "PARTNER_EDU_LEVEL", "KNOW_ETS", 
+                              "ETHNICITY", "EDU_LEVEL", "NATURAL_REGION", "PARTNER_EDU_LEVEL", "KNOW_ETS", 
                               "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_SYPHILIS", "CHECKUP_RULE_OUT_HIV",  "INTENDED_PREGNANCY", 
                               "PHYSICAL_VIOLENCE", "HOUSEHOLD_MEMBERS", "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", 
                               "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", "TOTAL_CHILDREN", 
                               "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE")
 
 
-data2 <- data1 %>% mutate(WEALTH_INDEX = case_when(WEALTH_INDEX == 'MIDDLE' ~ 'MIDDLE',
+data2 <- data1 %>% mutate(CHECKUP_RULE_OUT_HIV = case_when(CHECKUP_RULE_OUT_HIV == 'YES' ~ 1,
+                                                           CHECKUP_RULE_OUT_HIV == 'NO' ~ 0) ,
+                          
+                          WEALTH_INDEX = case_when(WEALTH_INDEX == 'MIDDLE' ~ 'MIDDLE',
                                            WEALTH_INDEX == 'POOR' ~ 'POOR',
                                            WEALTH_INDEX == 'POOREST' ~ 'POOREST',
                                            WEALTH_INDEX == 'RICH' ~ 'RICH-RICHEST',
@@ -769,14 +772,32 @@ data2 <- data1 %>% mutate(WEALTH_INDEX = case_when(WEALTH_INDEX == 'MIDDLE' ~ 'M
 
 # GET DUMMIES
 
-dummy <- caret::dummyVars(~ ., data = data2, fullRank = TRUE)
-
+dummy <- caret::dummyVars(~ ., data = data2, fullRank = TRUE, sep = '.')
 dummy
-#> Dummy Variable Object
-#> 
-#> Formula: ~.
-#> 2 variables, 1 factors
-#> Variables and levels will be separated by '.'
-#> A full rank encoding is used
 
-predict(dummy, data2)
+data3 <- as.data.frame(predict(dummy, data2))
+head(data3)
+
+# Valores vacios en target
+sum(is.na(data3$CHECKUP_RULE_OUT_HIV))*100/nrow(data3)
+
+# TRAIN Y TEST
+
+#target : CHECKUP_RULE_OUT_HIV
+table(data3$year)
+
+d2010 <- data3 %>% filter(year==2010)
+set.seed(123)
+train.2010 <- createDataPartition(y = d2010$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train.2010 <- d2010[train.2010, ]
+datos_test.2010  <- d2010[-train.2010, ]
+
+
+prop.table(table(data3$CHECKUP_RULE_OUT_HIV))
+prop.table(table(datos_train2010))
+
+d2011 <- data3 %>% filter(year==2011)
+set.seed(123)
+train.2010 <- createDataPartition(y = d2010$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2010 <- d2010[train.2010, ]
+datos_test.2010  <- d2010[-train.2010, ]
