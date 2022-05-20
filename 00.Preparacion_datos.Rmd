@@ -22,6 +22,8 @@ He unido los archivos de cada modulo para tener una sola base por anio. Algunas 
 
 ## Gestantes 2020
 
+
+
 ```{r, message=F, warning=F, error=F}
 gestacion1 <- read_sav("./data/raw/endes back up/2020/RE223132.sav")
 gestacion2 <- read_sav("./data/raw/endes back up/2020/REC94.sav") # outcome # id
