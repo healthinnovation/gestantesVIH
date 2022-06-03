@@ -734,28 +734,21 @@ ggplot(plot_data, aes(x = factor(LAST_BIRTH), fill = factor(LAST_BIRTH), y = pro
 
 
 data1 <- data %>% select( "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE",                       
-                              "ETHNICITY", "EDU_LEVEL", "NATURAL_REGION", "PARTNER_EDU_LEVEL", "KNOW_ETS", 
+                              "ETHNICITY", "DEPARTAMEN", "EDU_LEVEL", "NATURAL_REGION", "PARTNER_EDU_LEVEL", "KNOW_ETS", 
                               "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_SYPHILIS", "CHECKUP_RULE_OUT_HIV",  "INTENDED_PREGNANCY", 
                               "PHYSICAL_VIOLENCE", "HOUSEHOLD_MEMBERS", "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", 
                               "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", "TOTAL_CHILDREN", 
                               "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE")
 
-
+table(data1$ETHNICITY)
 data2 <- data1 %>% mutate(CHECKUP_RULE_OUT_HIV = case_when(CHECKUP_RULE_OUT_HIV == 'YES' ~ 1,
                                                            CHECKUP_RULE_OUT_HIV == 'NO' ~ 0) ,
                           
-                          WEALTH_INDEX = case_when(WEALTH_INDEX == 'MIDDLE' ~ 'MIDDLE',
-                                           WEALTH_INDEX == 'POOR' ~ 'POOR',
-                                           WEALTH_INDEX == 'POOREST' ~ 'POOREST',
-                                           WEALTH_INDEX == 'RICH' ~ 'RICH-RICHEST',
-                                           WEALTH_INDEX == 'RICHEST' ~ 'RICH-RICHEST'),
-                 
-                 RELATIONSHIP_HOUSEHOLD_HEAD = case_when(RELATIONSHIP_HOUSEHOLD_HEAD == 'DAUGTHER/SON' ~ 'DAUGTHER/SON',
-                                                         RELATIONSHIP_HOUSEHOLD_HEAD == 'HEAD' ~ 'HEAD-OTHER',
-                                                         RELATIONSHIP_HOUSEHOLD_HEAD == 'OTHER' ~ 'HEAD-OTHER',
-                                                         RELATIONSHIP_HOUSEHOLD_HEAD == 'WIFE' ~ 'WIFE'),
                  ETHNICITY = case_when(ETHNICITY == 'SPANISH' ~ 'SPANISH',
-                                       ETHNICITY != 'SPANISH' ~ 'NO_SPANISH'),
+                                       ETHNICITY == 'FOREIGNER' ~ 'FOREIGNER',
+                                       ETHNICITY == 'AIMARA' ~ 'INDIGENOUS_LANGUAGES',
+                                       ETHNICITY == 'OTHER INDIGENOUS' ~ 'INDIGENOUS_LANGUAGES',
+                                       ETHNICITY == 'QUECHUA' ~ 'INDIGENOUS_LANGUAGES'),
                  
                  EDU_LEVEL = case_when(EDU_LEVEL == 'HIGHER' ~ 'HIGHER',
                                        EDU_LEVEL == 'NONE/PRESCHOOL' ~ 'NONE/PRESCHOOL-PRIMARY',
@@ -775,10 +768,13 @@ data2 <- data1 %>% mutate(CHECKUP_RULE_OUT_HIV = case_when(CHECKUP_RULE_OUT_HIV 
 dummy <- caret::dummyVars(~ ., data = data2, fullRank = TRUE, sep = '.')
 dummy
 
-data3 <- as.data.frame(predict(dummy, data2))
-head(data3)
+data_dummy <- as.data.frame(predict(dummy, data2))
+head(data_dummy)
 
 # Valores vacios en target
+sum(is.na(data_dummy$CHECKUP_RULE_OUT_HIV))*100/nrow(data_dummy)
+
+data3 <- data_dummy %>% filter(!is.na(CHECKUP_RULE_OUT_HIV))
 sum(is.na(data3$CHECKUP_RULE_OUT_HIV))*100/nrow(data3)
 
 # TRAIN Y TEST
@@ -786,18 +782,83 @@ sum(is.na(data3$CHECKUP_RULE_OUT_HIV))*100/nrow(data3)
 #target : CHECKUP_RULE_OUT_HIV
 table(data3$year)
 
+#2010
 d2010 <- data3 %>% filter(year==2010)
 set.seed(123)
 train.2010 <- createDataPartition(y = d2010$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
 datos_train.2010 <- d2010[train.2010, ]
 datos_test.2010  <- d2010[-train.2010, ]
 
-
 prop.table(table(data3$CHECKUP_RULE_OUT_HIV))
 prop.table(table(datos_train2010))
 
+#2011
 d2011 <- data3 %>% filter(year==2011)
 set.seed(123)
-train.2010 <- createDataPartition(y = d2010$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2010 <- d2010[train.2010, ]
-datos_test.2010  <- d2010[-train.2010, ]
+train.2011 <- createDataPartition(y = d2011$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2011 <- d2011[train.2011, ]
+datos_test.2011  <- d2011[-train.2011, ]
+
+#2012
+d2012 <- data3 %>% filter(year==2012)
+set.seed(123)
+train.2012 <- createDataPartition(y = d2012$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2012 <- d2012[train.2012, ]
+datos_test.2012  <- d2012[-train.2012, ]
+
+#2013
+d2013 <- data3 %>% filter(year==2013)
+set.seed(123)
+train.2013 <- createDataPartition(y = d2013$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2013 <- d2013[train.2013, ]
+datos_test.2013  <- d2013[-train.2013, ]
+
+#2014
+d2014 <- data3 %>% filter(year==2014)
+set.seed(123)
+train.2014 <- createDataPartition(y = d2014$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2014 <- d2014[train.2014, ]
+datos_test.2014  <- d2014[-train.2014, ]
+
+#2015
+d2015 <- data3 %>% filter(year==2015)
+set.seed(123)
+train.2015 <- createDataPartition(y = d2015$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2015 <- d2015[train.2015, ]
+datos_test.2015  <- d2015[-train.2015, ]
+
+#2016
+d2016 <- data3 %>% filter(year==2016)
+set.seed(123)
+train.2016 <- createDataPartition(y = d2016$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2016 <- d2016[train.2016, ]
+datos_test.2016 <- d2016[-train.2016, ]
+
+#2017
+d2017 <- data3 %>% filter(year==2017)
+set.seed(123)
+train.2017 <- createDataPartition(y = d2017$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2017 <- d2017[train.2017, ]
+datos_test.2017 <- d2017[-train.2017, ]
+
+#2018
+d2018 <- data3 %>% filter(year==2018)
+set.seed(123)
+train.2018 <- createDataPartition(y = d2018$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2018 <- d2018[train.2018, ]
+datos_test.2018 <- d2018[-train.2018, ]
+
+#2019
+d2019 <- data3 %>% filter(year==2019)
+set.seed(123)
+train.2019 <- createDataPartition(y = d2019$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2019 <- d2019[train.2019, ]
+datos_test.2019 <- d2019[-train.2019, ]
+
+#2020
+d2020 <- data3 %>% filter(year==2020)
+set.seed(123)
+train.2020 <- createDataPartition(y = d2020$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
+datos_train2020 <- d2020[train.2020, ]
+datos_test.2020 <- d2020[-train.2020, ]
+
