@@ -2,6 +2,7 @@ library(tidyverse)
 library(scales)
 library(ggplot2)
 library(caret)
+library(xgboost)
 data_read<-read.csv("./data/datafinal.csv")
 head(data_read)
 names(data_read)
@@ -735,12 +736,12 @@ ggplot(plot_data, aes(x = factor(LAST_BIRTH), fill = factor(LAST_BIRTH), y = pro
 
 data1 <- data %>% select( "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE",                       
                               "ETHNICITY", "DEPARTAMEN", "EDU_LEVEL", "NATURAL_REGION", "PARTNER_EDU_LEVEL", "KNOW_ETS", 
-                              "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_SYPHILIS", "CHECKUP_RULE_OUT_HIV",  "INTENDED_PREGNANCY", 
+                              "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_HIV",  "INTENDED_PREGNANCY", 
                               "PHYSICAL_VIOLENCE", "HOUSEHOLD_MEMBERS", "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", 
                               "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", "TOTAL_CHILDREN", 
                               "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE")
 
-table(data1$ETHNICITY)
+
 data2 <- data1 %>% mutate(CHECKUP_RULE_OUT_HIV = case_when(CHECKUP_RULE_OUT_HIV == 'YES' ~ 1,
                                                            CHECKUP_RULE_OUT_HIV == 'NO' ~ 0) ,
                           
@@ -790,75 +791,111 @@ datos_train.2010 <- d2010[train.2010, ]
 datos_test.2010  <- d2010[-train.2010, ]
 
 prop.table(table(data3$CHECKUP_RULE_OUT_HIV))
-prop.table(table(datos_train2010))
+prop.table(table(datos_train.2010$CHECKUP_RULE_OUT_HIV))
 
 #2011
 d2011 <- data3 %>% filter(year==2011)
 set.seed(123)
 train.2011 <- createDataPartition(y = d2011$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2011 <- d2011[train.2011, ]
+datos_train.2011 <- d2011[train.2011, ]
 datos_test.2011  <- d2011[-train.2011, ]
 
 #2012
 d2012 <- data3 %>% filter(year==2012)
 set.seed(123)
 train.2012 <- createDataPartition(y = d2012$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2012 <- d2012[train.2012, ]
+datos_train.2012 <- d2012[train.2012, ]
 datos_test.2012  <- d2012[-train.2012, ]
 
 #2013
 d2013 <- data3 %>% filter(year==2013)
 set.seed(123)
 train.2013 <- createDataPartition(y = d2013$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2013 <- d2013[train.2013, ]
+datos_train.2013 <- d2013[train.2013, ]
 datos_test.2013  <- d2013[-train.2013, ]
 
 #2014
 d2014 <- data3 %>% filter(year==2014)
 set.seed(123)
 train.2014 <- createDataPartition(y = d2014$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2014 <- d2014[train.2014, ]
+datos_train.2014 <- d2014[train.2014, ]
 datos_test.2014  <- d2014[-train.2014, ]
 
 #2015
 d2015 <- data3 %>% filter(year==2015)
 set.seed(123)
 train.2015 <- createDataPartition(y = d2015$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2015 <- d2015[train.2015, ]
+datos_train.2015 <- d2015[train.2015, ]
 datos_test.2015  <- d2015[-train.2015, ]
 
 #2016
 d2016 <- data3 %>% filter(year==2016)
 set.seed(123)
 train.2016 <- createDataPartition(y = d2016$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2016 <- d2016[train.2016, ]
+datos_train.2016 <- d2016[train.2016, ]
 datos_test.2016 <- d2016[-train.2016, ]
 
 #2017
 d2017 <- data3 %>% filter(year==2017)
 set.seed(123)
 train.2017 <- createDataPartition(y = d2017$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2017 <- d2017[train.2017, ]
+datos_train.2017 <- d2017[train.2017, ]
 datos_test.2017 <- d2017[-train.2017, ]
 
 #2018
 d2018 <- data3 %>% filter(year==2018)
 set.seed(123)
 train.2018 <- createDataPartition(y = d2018$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2018 <- d2018[train.2018, ]
+datos_train.2018 <- d2018[train.2018, ]
 datos_test.2018 <- d2018[-train.2018, ]
 
 #2019
 d2019 <- data3 %>% filter(year==2019)
 set.seed(123)
 train.2019 <- createDataPartition(y = d2019$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2019 <- d2019[train.2019, ]
+datos_train.2019 <- d2019[train.2019, ]
 datos_test.2019 <- d2019[-train.2019, ]
 
 #2020
 d2020 <- data3 %>% filter(year==2020)
 set.seed(123)
 train.2020 <- createDataPartition(y = d2020$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train2020 <- d2020[train.2020, ]
+datos_train.2020 <- d2020[train.2020, ]
 datos_test.2020 <- d2020[-train.2020, ]
 
+
+train <- rbind(datos_train.2010,datos_train.2011,datos_train.2012,datos_train.2013,datos_train.2014,
+               datos_train.2015,datos_train.2016, datos_train.2017,datos_train.2018,datos_train.2019,
+               datos_train.2020)
+
+test <- rbind(datos_test.2010, datos_test.2011, datos_test.2012, datos_test.2013, datos_test.2014, 
+              datos_test.2015, datos_test.2016, datos_test.2017, datos_test.2018, datos_test.2019, 
+              datos_test.2020)
+
+
+# XGBoost
+df<- list()
+
+Datos_E <- xgb.DMatrix(data = train %>% select(-CHECKUP_RULE_OUT_HIV) %>% data.matrix(), label = train$CHECKUP_RULE_OUT_HIV)
+Datos_P <- xgb.DMatrix(data = test %>% select(-CHECKUP_RULE_OUT_HIV) %>% data.matrix(), label = test$CHECKUP_RULE_OUT_HIV)
+
+#Entrenamiento del modelo
+set.seed(1000)
+modelo <- xgb.train(data=Datos_E, params=list(max_depth = 3), nrounds=10)
+modelo
+
+Prediccion <- predict(modelo, Datos_P)
+Prediccion <- ifelse(Prediccion > 0.5, 1, 0)
+M_Confusion <- table(test$CHECKUP_RULE_OUT_HIV, Prediccion)
+M_Confusion
+confusionMatrix(M_Confusion)
+
+------------------
+df$predict_01 <- predict(df$modelo_01, df$test_mat)
+head(df$predict_01)
+
+library(caret)
+cbind(ifelse(Prediccion > 0.5, 1, 0), test$CHECKUP_RULE_OUT_HIV) %>% 
+  data.frame() %>% 
+  table() %>% 
+  confusionMatrix()
