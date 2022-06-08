@@ -20,8 +20,46 @@ library(dplyr)
 # Bases por anio
 He unido los archivos de cada modulo para tener una sola base por anio. Algunas encuestas son dirigidas a la mujer en edad fertil/madre, otras nivel hogar. Como veran, solo la base de programas sociales es a nivel hogar (de las que he usado), por eso es la unica que el join es por HHID. Las demas, son dirigidas a la madre/MEF. 
 
-## Gestantes 2020
+##Gestantes 2021
 
+```{r, message=F, warning=F, error=F}
+
+gestacion1 <- read_sav("./data/raw/endes back up/2021/RE223132.sav")
+gestacion2 <- read_sav("./data/raw/endes back up/2021/REC94.sav") # outcome # id
+violence <- read_sav("./data/raw/endes back up/2021/REC84DV.sav")
+sociodemo <- read_sav("./data/raw/endes back up/2021/REC0111.sav")
+vih1 <- read_sav("./data/raw/endes back up/2021/RE758081.sav")
+vih2 <- read_sav("./data/raw/endes back up/2021/REC91.sav")
+nacion <- read_sav("./data/raw/endes back up/2021/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+prenatal <- read_sav("./data/raw/endes back up/2021/REC41.sav") %>% rename(IDX94 = MIDX)
+#seguro <- read_sav("./data/raw/endes back up/2021/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
+seguro <- read_sav("./data/raw/endes back up/2021/REC42.sav") %>% select(CASEID,V481:V481X)
+#children <- read_sav("./data/raw/endes back up/2021/RECH6.sav") %>% unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+
+df_gestantes2021<-
+  gestacion2 %>% 
+  left_join(gestacion1, by = "CASEID") %>% 
+  left_join(violence, by = "CASEID") %>% 
+  left_join(sociodemo, by = "CASEID") %>%
+  left_join(vih1, by = "CASEID") %>% 
+  left_join(vih2, by = "CASEID") %>%
+  left_join(nacion, by = "CASEID") %>%
+  left_join(seguro, by = "CASEID") %>% 
+  left_join(prenatal, by = c("CASEID", "IDX94")) %>%
+  #left_join(children, by = "CASEID") %>%
+  mutate(year = "2021", 
+         V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
+                        (V131==2) ~ 3,
+                        (V131==1) ~ 2,
+                         (V131==10) ~ 1,
+                          (V131==11 | V131==12) ~ 5))
+
+dim(df_gestantes2021) 
+```
+
+
+
+## Gestantes 2020
 
 
 ```{r, message=F, warning=F, error=F}
@@ -432,12 +470,12 @@ Hasta aqui ya esta cada base por cada anio generada. Lo que sigue es unir las ba
 list<- list(df_gestantes2010,df_gestantes2011,df_gestantes2012,
             df_gestantes2013,df_gestantes2014,df_gestantes2015,
             df_gestantes2016,df_gestantes2017,df_gestantes2018,
-            df_gestantes2019,df_gestantes2020)
+            df_gestantes2019,df_gestantes2020, df_gestantes2021)
 
 dataset<- map_df(.x = list,
                  .f = ~dataprep(.x)) # funcion de prueba creada
 
-write.csv(dataset,"./data/data_analysis.csv", row.names = F)
+write.csv(dataset,"./data/data2021/data_2021final.csv", row.names = F)
 
 rm(list=ls()) # Elimina todos los objetos del enviroment
 ```
@@ -446,7 +484,11 @@ rm(list=ls()) # Elimina todos los objetos del enviroment
 2. Transformar los datos en objetos survey
 
 ```{r}
-df_gestantes<- read.csv("./data/data_analysis.csv")
+df_gestantes<- read.csv("./data/data2021/data_2021final.csv") %>% 
+              select( "CASEID", "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE", "ETHNICITY",  "DEPARTAMEN", "LITERACY", "CURRENT_MARITAL_STATUS",  "EDU_LEVEL", "NATURAL_REGION", "PARTNER_APPROVE_DISAPPROVE_FAMILY_PLANNING", "PARTNER_EDU_LEVEL", "CAN_SOMETHING_BE_DONE_PREVENT_AIDS", "KNOW_ETS", "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_SYPHILIS", "CHECKUP_RULE_OUT_HIV", "PRENATAL_CARE_ATTENTION",  "INTENDED_PREGNANCY", "PHYSICAL_VIOLENCE", "DIAGNOSTED_STD_LAST_12_MONTHS", "KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD", "HOUSEHOLD_MEMBERS", "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", "HAVE_ITS_SYMPTOMS",  "TOTAL_CHILDREN", "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE", "LAST_BIRTH", "V001", "V022", "V005", "IDX94") %>% 
+  filter(LAST_BIRTH== "LESS THAN 12 MONTHS" & IDX94==1)
+
+write.csv(df_gestantes,"./data/data2021final.csv", row.names = F)
 
 df<-
   df_gestantes %>% 
