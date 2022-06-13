@@ -3,7 +3,7 @@ library(survey)
 library(dplyr)
 data_read<-read.csv("./data/data2021final.csv")
 attach(data_read)
-library(naniar)
+
 
 
 data2 <- data_read %>% mutate (EDU_LEVEL = recode(EDU_LEVEL, 'NONE/PRESCHOOL' = 'PRIMARY')) %>%
