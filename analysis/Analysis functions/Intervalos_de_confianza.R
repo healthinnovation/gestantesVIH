@@ -1,15 +1,23 @@
 library(tidyverse)
 library(survey)
-data_read<-read.csv("./data/datafinal.csv")
+library(dplyr)
+data_read<-read.csv("./data/data2021final.csv")
 attach(data_read)
+library(naniar)
 
-data2 <- data_read %>% filter(year %in% c('2010','2015','2019','2020'))
+
+data2 <- data_read %>% mutate (EDU_LEVEL = recode(EDU_LEVEL, 'NONE/PRESCHOOL' = 'PRIMARY')) %>%
+  mutate(ETHNICITY = recode(ETHNICITY, 'AIMARA' = 'QUECHUA')) %>% 
+  mutate(ETHNICITY = recode(ETHNICITY, 'OTHER INDIGENOUS' = 'QUECHUA')) %>% 
+  mutate(across(where(is.character), ~na_if(., "FOREIGNER"))) %>% 
+  filter(year %in% c('2010','2015','2019','2021'))
+  
 head(data2)
 
-length(ID)
+length(CASEID)
 length(unique(V001))
 
-data3 <- data2 %>% select(-ID)
+data3 <- data2 %>% select(-CASEID)
 
 #----------------------------------------
 # Transformando la data en objeto survey
