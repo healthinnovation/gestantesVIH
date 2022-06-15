@@ -2,7 +2,7 @@ library(tidyverse)
 library(scales)
 library(ggplot2)
 library(caret)
-library(xgboost)
+
 data_read<-read.csv("./data/datafinal.csv")
 head(data_read)
 names(data_read)
@@ -867,35 +867,11 @@ datos_test.2020 <- d2020[-train.2020, ]
 train <- rbind(datos_train.2010,datos_train.2011,datos_train.2012,datos_train.2013,datos_train.2014,
                datos_train.2015,datos_train.2016, datos_train.2017,datos_train.2018,datos_train.2019,
                datos_train.2020)
+head(train)
 
 test <- rbind(datos_test.2010, datos_test.2011, datos_test.2012, datos_test.2013, datos_test.2014, 
               datos_test.2015, datos_test.2016, datos_test.2017, datos_test.2018, datos_test.2019, 
               datos_test.2020)
 
-
-# XGBoost
-df<- list()
-
-Datos_E <- xgb.DMatrix(data = train %>% select(-CHECKUP_RULE_OUT_HIV) %>% data.matrix(), label = train$CHECKUP_RULE_OUT_HIV)
-Datos_P <- xgb.DMatrix(data = test %>% select(-CHECKUP_RULE_OUT_HIV) %>% data.matrix(), label = test$CHECKUP_RULE_OUT_HIV)
-
-#Entrenamiento del modelo
-set.seed(1000)
-modelo <- xgb.train(data=Datos_E, params=list(max_depth = 3), nrounds=10)
-modelo
-
-Prediccion <- predict(modelo, Datos_P)
-Prediccion <- ifelse(Prediccion > 0.5, 1, 0)
-M_Confusion <- table(test$CHECKUP_RULE_OUT_HIV, Prediccion)
-M_Confusion
-confusionMatrix(M_Confusion)
-
-------------------
-df$predict_01 <- predict(df$modelo_01, df$test_mat)
-head(df$predict_01)
-
-library(caret)
-cbind(ifelse(Prediccion > 0.5, 1, 0), test$CHECKUP_RULE_OUT_HIV) %>% 
-  data.frame() %>% 
-  table() %>% 
-  confusionMatrix()
+write.csv(train,"train.csv")
+write.csv(test,"test.csv")
