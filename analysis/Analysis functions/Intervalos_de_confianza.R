@@ -6,10 +6,13 @@ attach(data_read)
 
 
 
+
 data2 <- data_read %>% mutate (EDU_LEVEL = recode(EDU_LEVEL, 'NONE/PRESCHOOL' = 'PRIMARY')) %>%
   mutate(ETHNICITY = recode(ETHNICITY, 'AIMARA' = 'QUECHUA')) %>% 
   mutate(ETHNICITY = recode(ETHNICITY, 'OTHER INDIGENOUS' = 'QUECHUA')) %>% 
   mutate(across(where(is.character), ~na_if(., "FOREIGNER"))) %>% 
+  mutate(PRENATAL_ATTENTION_PLACE = recode(PRENATAL_ATTENTION_PLACE, 'FF.AA.' = 'OTHERS')) %>% 
+  mutate(PRENATAL_ATTENTION_PLACE = recode(PRENATAL_ATTENTION_PLACE, 'PRIVATE' = 'OTHERS')) %>%
   filter(year %in% c('2010','2015','2019','2021'))
   
 head(data2)
@@ -278,10 +281,19 @@ df20$institution_ci
 
 df21 <- df %>% mutate(
   first_visit_ci = map(.x = datasvy,
-                       .f = ~svymean(~as.factor(FIRST_PRENATAL_VISIT), design = .x, na.rm = T, vartype = c("se","ci")) %>% 
-                         confint() %>% 
-                         as.data.frame() %>% 
-                         rownames_to_column(var = "var")))
-
+                       .f = ~svyquantile(~as.numeric(FIRST_PRENATAL_VISIT), design = .x, na.rm = T, 
+                                         quantiles = c(0.25, 0.5,0.75), ci=TRUE, interval.type="betaWald")))
 
 df21$first_visit_ci
+
+# NUMBER OF PRENATAL CONTROL VISITS: NUMBER_PRENATAL_VISITS
+
+df22 <- df %>% mutate(
+  control_visit_ci = map(.x = datasvy,
+                       .f = ~svyquantile(~as.numeric(NUMBER_PRENATAL_VISITS), design = .x, na.rm = T, 
+                                         quantiles = c(0.25, 0.5,0.75), ci=TRUE, interval.type="betaWald")))
+
+df22$control_visit_ci
+
+
+
