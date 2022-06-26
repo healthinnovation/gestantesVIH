@@ -611,4 +611,31 @@ df22 <- df %>% mutate(
 
 df22$control_visit_ci
 
+##total
+data_read<-read.csv("./data/data2021/data_2021final.csv")
+attach(data_read)
+
+install.packages("tmap")
+library(tmap)
+
+data_total <-data_read %>% mutate (EDU_LEVEL = recode(EDU_LEVEL, 'NONE/PRESCHOOL' = 'PRIMARY')) %>%
+   mutate(ETHNICITY = recode(ETHNICITY, 'AIMARA' = 'QUECHUA')) %>% 
+   mutate(ETHNICITY = recode(ETHNICITY, 'OTHER INDIGENOUS' = 'QUECHUA')) %>% 
+   mutate(across(where(is.character), ~na_if(., "FOREIGNER"))) %>% 
+   mutate(PRENATAL_ATTENTION_PLACE = recode(PRENATAL_ATTENTION_PLACE, 'FF.AA.' = 'OTHERS')) %>% 
+   mutate(PRENATAL_ATTENTION_PLACE = recode(PRENATAL_ATTENTION_PLACE, 'PRIVATE' = 'OTHERS')) %>% 
+   filter(LAST_BIRTH== "LESS THAN 12 MONTHS") %>% 
+   filter(IDX94=="1")
+
+#----------------------------------------
+# Transformando la data en objeto survey
+#----------------------------------------
+data(data_total)
+df_total<- svydesign(id =~ V001, strata =~ V022, weights=~V005, data=data_total, nest = TRUE)
+
+prop.table(svytable(~AGE_MOTHER, df_total))
+
+prop.table(svytable(~ETHNICITY, df_total))
+
+prop.table(svytable(~KNOW_ETS, df_total))
 
