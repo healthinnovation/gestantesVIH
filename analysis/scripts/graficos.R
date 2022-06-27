@@ -79,17 +79,18 @@ ggplot(df2, aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*1
 
 ggplot(df2, aes(x = year, y = vihprop*100, group = var)) + 
   geom_col(size = 1.2, aes(fill = var))+
-  ggsci::scale_fill_npg()+
+  ggsci::scale_fill_futurama(alpha = 0.8)+
   
   xlab("Years") +
   scale_x_continuous(expand = c(0, 0), breaks = c(2010:2021), limits = c(2009.5,2021.6))+
   ylab("Prop. %")+
   
-  theme_minimal()+
+  theme_bw()+
   
   theme(
     axis.title = element_text(face ="bold", size = 11),
     legend.text = element_text(face = "bold", size = 12),
+    axis.text = element_text(face = "bold"),
     legend.position = "top",
     legend.title = element_blank(),
     strip.text = element_text(face = "bold"),
@@ -97,22 +98,22 @@ ggplot(df2, aes(x = year, y = vihprop*100, group = var)) +
   )
   
 
-ggsave("figura1.pdf",width = 8, height = 6, dpi= 300)
+ggsave("figura1.png",width = 8, height = 6, dpi= 300)
 
 
 ################
-# df2 %>% 
-#   filter(year%in%c(2010,2020)) %>% 
+# df2 %>%
+#   filter(year%in%c(2010,2020)) %>%
 #   ggplot(aes(x = year, y = vihprop*100, group = var))+
 #   geom_point(color = "#0C6291", size = 6)+
 #   geom_line(color = "#0C6291", size = 1.5)+
-#   
+# 
 #   xlab("Years") +
 #   scale_x_continuous(expand = c(0, 0), breaks = c(2010:2020), limits = c(2009,2022))+
 #   ylab("Prop. %")+
-#   
+# 
 #   theme_bw()+
-#   
+# 
 #   theme(
 #     axis.title = element_text(face ="bold", size = 11),
 #     legend.text = element_text(face = "bold", size = 12),
@@ -136,7 +137,8 @@ df2 %>%
   ggplot(aes(x = year, y = `as.factor(CHECKUP_RULE_OUT_HIV)`*100, ymin = ci_l*100, ymax = ci_u*100))+
   geom_line(size = 1.2, aes(col = WEALTH_INDEX))+
   geom_ribbon(aes(fill = WEALTH_INDEX), alpha = 0.1)+
-  scale_color_npg()+
+  scale_color_nejm()+
+  scale_fill_nejm()+
   xlab("Years") +
   scale_x_continuous(expand = c(0, 0), breaks = c(2010:2021), limits = c(2010,2021.2))+
   ylab("Prop. %")+
@@ -151,7 +153,7 @@ df2 %>%
     axis.line = element_line(colour = "black", size = 1)
   )
 
-ggsave("figura3.png",width = 8, height = 6)
+ggsave("figura2.png",dpi= 300, width = 8, height = 6)
   
 
 # df2<-
@@ -219,7 +221,7 @@ df2 %>%
   ylab("Prop. %") +
   facet_wrap(~DEPARTAMEN)
 
-ggsave("figura6.png",width = 13, height = 7)
+ggsave("figura3.png",width = 13, height = 7)
 
 
 df2<-
@@ -240,7 +242,7 @@ df2 %>%
   scale_x_continuous(expand = c(0, 0), breaks = c(2010:2020), limits = c(2010,2020.2))+
   ylab("Prop. %")
 
-ggsave("figura7.png",width = 8, height = 6)
+ggsave("figura4.png",width = 8, height = 6)
 
 
 
