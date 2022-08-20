@@ -475,20 +475,22 @@ list<- list(df_gestantes2010,df_gestantes2011,df_gestantes2012,
 dataset<- map_df(.x = list,
                  .f = ~dataprep(.x)) # funcion de prueba creada
 
-write.csv(dataset,"./data/data2021/data_2021final.csv", row.names = F)
+#write.csv(dataset,"./data/data2021/data_2021final.csv", row.names = F)
 
-rm(list=ls()) # Elimina todos los objetos del enviroment
+#(list=ls()) # Elimina todos los objetos del enviroment
+
 ```
 
 
 2. Transformar los datos en objetos survey
 
 ```{r}
-df_gestantes<- read.csv("./data/data2021/data_2021final.csv") %>% 
+df_gestantes<- dataset %>% 
               select( "CASEID", "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE", "ETHNICITY",  "DEPARTAMEN", "LITERACY", "CURRENT_MARITAL_STATUS",  "EDU_LEVEL", "NATURAL_REGION", "PARTNER_APPROVE_DISAPPROVE_FAMILY_PLANNING", "PARTNER_EDU_LEVEL", "CAN_SOMETHING_BE_DONE_PREVENT_AIDS", "KNOW_ETS", "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_SYPHILIS", "CHECKUP_RULE_OUT_HIV", "PRENATAL_CARE_ATTENTION",  "INTENDED_PREGNANCY", "PHYSICAL_VIOLENCE", "DIAGNOSTED_STD_LAST_12_MONTHS", "KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD", "HOUSEHOLD_MEMBERS", "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", "HAVE_ITS_SYMPTOMS",  "TOTAL_CHILDREN", "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE", "LAST_BIRTH", "V001", "V022", "V005", "IDX94") %>% 
-  filter(LAST_BIRTH== "LESS THAN 12 MONTHS" & IDX94==1)
+  
+  filter(LAST_BIRTH== "LESS THAN 12 MONTHS" & !is.na(CHECKUP_RULE_OUT_HIV))
 
-write.csv(df_gestantes,"./data/data2021final.csv", row.names = F)
+#write.csv(df_gestantes,"./data/data2021final.csv", row.names = F)
 
 df<-
   df_gestantes %>% 

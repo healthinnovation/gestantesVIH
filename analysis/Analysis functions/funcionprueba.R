@@ -172,6 +172,8 @@ dataprep<-function(data){
       
       CHECKUP_RULE_OUT_HIV = as.factor(ifelse(S411H == 1,"YES","NO")),
       
+      #CHECKUP_RULE_OUT_HEPATITIS = as.factor(ifelse(QI411_M == 1,"YES","NO")),
+      
       PRENATAL_CARE_ATTENTION = case_when((M2A==1 | M2B==1 | M2C==1 | M2D==1) ~ "PROFESSIONAL_OR_TECHNICAL",
                                           (M2E==1 | M2F==1 | M2G==1 | M2H==1 | M2I==1 | M2J==1 | M2K==1 | M2L==1 | M2M==1) ~ "OTHER",
                                           (M2N==1) ~ "NOBODY"),#misma respuesta en 2 var. Hay respuestas en el 1er grupo y 2do grupo, y lo agrupa en el 1ero
