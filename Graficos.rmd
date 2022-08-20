@@ -237,6 +237,7 @@ ggsave("figura1.png", dpi = 300, width = 12, height = 5)
 
 # Grafico 2
 
+## HIV
 ```{r}
 df<-
   df_gestantes %>% 
@@ -305,6 +306,80 @@ df2 %>%
     
 
 ggsave("figura2.png",width = 13,height = 10, dpi = 300)
+
+
+```
+
+## SIFILIS
+
+```{r}
+df<-
+  df_gestantes %>% 
+  mutate(
+    CHECKUP_RULE_OUT_SYPHILIS2 = ifelse(is.na(CHECKUP_RULE_OUT_SYPHILIS),"Missing",
+                   ifelse(CHECKUP_RULE_OUT_SYPHILIS == 1,"Yes",
+                          ifelse(CHECKUP_RULE_OUT_SYPHILIS == 0 | CHECKUP_RULE_OUT_SYPHILIS == 8 , "No",CHECKUP_RULE_OUT_SYPHILIS))),
+    
+    CHECKUP_RULE_OUT_SYPHILIS2 = as.factor(CHECKUP_RULE_OUT_SYPHILIS2)
+  ) %>% 
+  group_by(year) %>% 
+  nest() %>% 
+  mutate(
+    datasvy = map(.x = data,
+                  .f = ~svydesign(id =~ V001, strata =~ V022, weights=~V005, data=.x))
+  )
+options(survey.lonely.psu="remove")
+```
+
+
+```{r}
+df2<-
+  df %>% 
+  mutate(
+    vih = map(.x = datasvy,
+              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_SYPHILIS2), by = ~as.factor(DEPARTAMEN), design = .x, FUN =svyciprop, na.rm.all = T))
+  ) %>% 
+  unnest(vih) %>% 
+  
+  mutate(
+    across(`as.factor(CHECKUP_RULE_OUT_SYPHILIS2)`:`se.as.numeric(as.factor(CHECKUP_RULE_OUT_SYPHILIS2))`,.fns = ~round(.,2)*100)
+  ) %>%
+  
+  rename(
+    DEPARTAMEN = `as.factor(DEPARTAMEN)`,
+    `Syphilis Screening` = `as.factor(CHECKUP_RULE_OUT_SYPHILIS2)`
+  ) %>% 
+  
+  left_join(departamento) %>% 
+  
+  st_as_sf()
+```
+
+
+```{r}
+df2 %>%
+  ggplot(aes(fill = `Syphilis Screening`))+
+  geom_sf(alpha = 0.8) + 
+  scale_fill_carto_c(palette = "BurgYl")+
+  
+  guides(fill = guide_colourbar(barheight = 0.5, 
+                                barwidth = 20,
+                                title.position = "top",
+                                direction = "horizontal"),
+         
+         alpha = "none")+
+  facet_wrap(~year) + 
+    theme(axis.title = element_blank(),
+        axis.text.x = element_text(angle = 30, size = 6),
+        strip.background = element_blank(),
+        panel.background = element_blank(),
+        strip.text = element_text(face = "bold"),
+        legend.position = "bottom",
+        legend.title = element_text(size = 9, face = "bold"),
+        legend.key.size = unit(0.5, 'cm'))
+    
+
+ggsave("figura3.png",width = 13,height = 10, dpi = 300)
 
 
 ```
