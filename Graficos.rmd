@@ -38,6 +38,7 @@ df_gestantes<- read.csv("./data/data2021final.csv") %>%
 # Grafico 1
 
 ## HIV
+
 ```{r}
 df<-
   df_gestantes %>% 
@@ -56,7 +57,6 @@ df<-
   )
 options(survey.lonely.psu="remove")
 ```
-
 
 ```{r}
 hiv_df<-
@@ -95,7 +95,6 @@ hiv_df %>%
   DT::datatable()
 ```
 
-
 ```{r}
 hiv<-
   ggplot(hiv_df, aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100, group = var)) + 
@@ -128,9 +127,8 @@ hiv<-
 hiv + 
   theme(legend.position = "none")
 
-#ggsave("grafico1.png", dpi = 300, width = 6, height = 4)
-```
 
+```
 
 ```{r}
 # WEALTH INDEX
@@ -149,7 +147,6 @@ wi_df %>%
   
     DT::datatable()
 ```
-
 
 ```{r}
 # EDUCATION
@@ -174,18 +171,58 @@ edu_df<-
 
 ```{r}
  
+hiv_wi<-
   ggplot()+
   
   geom_line(data = wi_df, aes(x = year, y = `as.factor(CHECKUP_RULE_OUT_HIV2)`*100,col = WEALTH_INDEX, ymin = ci_l*100, ymax = ci_u*100),
-            size = 0.5, alpha = 0.5)+
+            size = 0.8, alpha = 0.4)+
   
   geom_line(data = hiv_df %>% filter(var == "Yes"),
-            aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), col = "#70284a", size = 1.3)+
+            aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), col = "#70284a", size = 1.2)+
   geom_ribbon(data = hiv_df %>% filter(var == "Yes"),
               aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), fill = "#70284a",alpha = 0.1)+
 
 
-  ggsci::scale_color_npg()+
+  ggsci::scale_color_lancet()+
+  
+  
+  xlab("Years") +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2021), limits = c(2010,2021.2))+
+  ylab("Prop. %")+
+  theme_bw()+
+  theme(
+    axis.title = element_text(face ="bold", size = 11),
+    legend.text = element_text(size = 8, face = "bold"),
+    axis.text = element_text(face = "bold", family = "Arial"),
+    axis.text.x = element_text( size = 9),
+    legend.position = "top",
+    legend.title = element_blank(),
+    axis.line = element_line(colour = "black", size = 1),
+    panel.background = element_blank(),
+    strip.background = element_blank(),
+    strip.text = element_text(face = "bold"),
+    panel.grid = element_blank()
+  )
+
+#ggsave("test.png",dpi = 300, width = 8, height = 6)
+```
+
+
+
+```{r}
+hiv_edu<-
+  ggplot()+
+  
+  geom_line(data = edu_df, aes(x = year, y = `as.factor(CHECKUP_RULE_OUT_HIV2)`*100,col = EDU_LEVEL, ymin = ci_l*100, ymax = ci_u*100),
+            size = 0.8, alpha = 0.4)+
+  
+  geom_line(data = hiv_df %>% filter(var == "Yes"),
+            aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), col = "#70284a", size = 1.2)+
+  geom_ribbon(data = hiv_df %>% filter(var == "Yes"),
+              aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), fill = "#70284a",alpha = 0.1)+
+
+
+  ggsci::scale_color_lancet()+
   #scale_color_manual(values = c("#675353","#575573","#BFA5A5","#355F5F","#005FAA"))+
   
   xlab("Years") +
@@ -206,47 +243,17 @@ edu_df<-
     panel.grid = element_blank()
   )
 
-ggsave("test.png",dpi = 300, width = 8, height = 6)
+#ggsave("test2.png",dpi = 300, width = 10, height = 8)
+
 ```
 
 
 ```{r}
-ggplot()+
-  
-  geom_line(data = edu_df, aes(x = year, y = `as.factor(CHECKUP_RULE_OUT_HIV2)`*100,col = EDU_LEVEL, ymin = ci_l*100, ymax = ci_u*100),
-            size = 0.5, alpha = 0.5)+
-  
-  geom_line(data = hiv_df %>% filter(var == "Yes"),
-            aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), col = "#70284a", size = 1.3)+
-  geom_ribbon(data = hiv_df %>% filter(var == "Yes"),
-              aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), fill = "#70284a",alpha = 0.1)+
+plot_grid(hiv_wi,hiv_edu,labels = c("a","b"))
 
-
-  ggsci::scale_color_npg()+
-  #scale_color_manual(values = c("#675353","#575573","#BFA5A5","#355F5F","#005FAA"))+
-  
-  xlab("Years") +
-  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2021), limits = c(2010,2021.2))+
-  ylab("Prop. %")+
-  theme_bw()+
-  theme(
-    axis.title = element_text(face ="bold", size = 11),
-    legend.text = element_text(size = 8, face = "bold"),
-    axis.text = element_text(face = "bold", family = "Arial"),
-    axis.text.x = element_text( size = 9),
-    legend.position = "top",
-    legend.title = element_blank(),
-    axis.line = element_line(colour = "black", size = 1),
-    panel.background = element_blank(),
-    strip.background = element_blank(),
-    strip.text = element_text(face = "bold"),
-    panel.grid = element_blank()
-  )
-
-ggsave("test2.png",dpi = 300, width = 8, height = 6)
+ggsave("figura1.png", dpi = 300, width = 12, height = 5)
 
 ```
-
 
 ## SIFILIS
 
@@ -267,7 +274,6 @@ df<-
   )
 options(survey.lonely.psu="remove")
 ```
-
 
 ```{r}
 df2<-
@@ -306,7 +312,6 @@ df2 %>%
   DT::datatable()
 ```
 
-
 ```{r}
 sifilis<-
   ggplot(df2, aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100, group = var)) + 
@@ -337,7 +342,6 @@ sifilis<-
   )
 ```
 
-
 ```{r}
 
 legend<-cowplot::get_legend(hiv)
@@ -348,13 +352,13 @@ plot_grid(plot_grid(hiv + theme(legend.position = "none"),
                     labels = c("A","B")),legend, ncol = 1, rel_heights = c(1,0.1))
 
 
-ggsave("figura1.png", dpi = 300, width = 12, height = 5)
+#ggsave("figura1.png", dpi = 300, width = 12, height = 5)
 ```
-
 
 # Grafico 2
 
 ## HIV
+
 ```{r}
 df<-
   df_gestantes %>% 
@@ -373,7 +377,6 @@ df<-
   )
 options(survey.lonely.psu="remove")
 ```
-
 
 ```{r}
 df2<-
@@ -397,7 +400,6 @@ df2<-
   
   st_as_sf()
 ```
-
 
 ```{r}
 df2 %>%
@@ -448,7 +450,6 @@ df<-
 options(survey.lonely.psu="remove")
 ```
 
-
 ```{r}
 df2<-
   df %>% 
@@ -471,7 +472,6 @@ df2<-
   
   st_as_sf()
 ```
-
 
 ```{r}
 df2 %>%
@@ -500,4 +500,3 @@ ggsave("figura3.png",width = 13,height = 10, dpi = 300)
 
 
 ```
-
