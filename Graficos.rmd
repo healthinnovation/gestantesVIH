@@ -59,7 +59,7 @@ options(survey.lonely.psu="remove")
 
 
 ```{r}
-df2<-
+hiv_df<-
   df %>% 
   mutate(
     
@@ -87,7 +87,7 @@ df2<-
   filter(var != "Missing")
 
 
-df2 %>% 
+hiv_df %>% 
   select(year,var,vihprop,`2.5 %`,`97.5 %`) %>% 
   mutate(
     across(.cols = vihprop:`97.5 %`, .fns = ~round(.*100,1))
@@ -98,7 +98,7 @@ df2 %>%
 
 ```{r}
 hiv<-
-  ggplot(df2, aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100, group = var)) + 
+  ggplot(hiv_df, aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100, group = var)) + 
     geom_line(size = 1.2, aes(col = var))+
   geom_ribbon(aes(fill = var), alpha = 0.1)+
   #geom_errorbar(aes(color=var), width = 0.2, alpha = 0.35) +
@@ -130,6 +130,123 @@ hiv +
 
 #ggsave("grafico1.png", dpi = 300, width = 6, height = 4)
 ```
+
+
+```{r}
+# WEALTH INDEX
+wi_df<-
+  df %>% 
+  mutate(
+    vih = map(.x = datasvy,
+              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_HIV2), by = ~WEALTH_INDEX, design = .x, FUN =svyciprop, vartype=c('se','ci')) %>% 
+                as.data.frame())
+  ) %>% 
+  unnest(vih)
+
+wi_df %>% 
+  mutate(
+    across(`as.factor(CHECKUP_RULE_OUT_HIV2)`:ci_u,.fns = ~round(.,3)*100)) %>% 
+  
+    DT::datatable()
+```
+
+
+```{r}
+# EDUCATION
+
+edu_df<-
+  df %>% 
+  mutate(
+    vih = map(.x = datasvy,
+              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_HIV2), by = ~EDU_LEVEL, design = .x, FUN =svyciprop, vartype=c('se','ci')) %>% 
+                as.data.frame())
+  ) %>% 
+  unnest(vih)
+  
+ edu_df %>% 
+  mutate(
+    across(`as.factor(CHECKUP_RULE_OUT_HIV2)`:ci_u,.fns = ~round(.,3)*100)) %>% 
+  
+    DT::datatable() 
+  
+```
+
+
+```{r}
+ 
+  ggplot()+
+  
+  geom_line(data = wi_df, aes(x = year, y = `as.factor(CHECKUP_RULE_OUT_HIV2)`*100,col = WEALTH_INDEX, ymin = ci_l*100, ymax = ci_u*100),
+            size = 0.5, alpha = 0.5)+
+  
+  geom_line(data = hiv_df %>% filter(var == "Yes"),
+            aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), col = "#70284a", size = 1.3)+
+  geom_ribbon(data = hiv_df %>% filter(var == "Yes"),
+              aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), fill = "#70284a",alpha = 0.1)+
+
+
+  ggsci::scale_color_npg()+
+  #scale_color_manual(values = c("#675353","#575573","#BFA5A5","#355F5F","#005FAA"))+
+  
+  xlab("Years") +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2021), limits = c(2010,2021.2))+
+  ylab("Prop. %")+
+  theme_bw()+
+  theme(
+    axis.title = element_text(face ="bold", size = 11),
+    legend.text = element_text(size = 8, face = "bold"),
+    axis.text = element_text(face = "bold", family = "Arial"),
+    axis.text.x = element_text( size = 9),
+    legend.position = "top",
+    legend.title = element_blank(),
+    axis.line = element_line(colour = "black", size = 1),
+    panel.background = element_blank(),
+    strip.background = element_blank(),
+    strip.text = element_text(face = "bold"),
+    panel.grid = element_blank()
+  )
+
+ggsave("test.png",dpi = 300, width = 8, height = 6)
+```
+
+
+```{r}
+ggplot()+
+  
+  geom_line(data = edu_df, aes(x = year, y = `as.factor(CHECKUP_RULE_OUT_HIV2)`*100,col = EDU_LEVEL, ymin = ci_l*100, ymax = ci_u*100),
+            size = 0.5, alpha = 0.5)+
+  
+  geom_line(data = hiv_df %>% filter(var == "Yes"),
+            aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), col = "#70284a", size = 1.3)+
+  geom_ribbon(data = hiv_df %>% filter(var == "Yes"),
+              aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100), fill = "#70284a",alpha = 0.1)+
+
+
+  ggsci::scale_color_npg()+
+  #scale_color_manual(values = c("#675353","#575573","#BFA5A5","#355F5F","#005FAA"))+
+  
+  xlab("Years") +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2021), limits = c(2010,2021.2))+
+  ylab("Prop. %")+
+  theme_bw()+
+  theme(
+    axis.title = element_text(face ="bold", size = 11),
+    legend.text = element_text(size = 8, face = "bold"),
+    axis.text = element_text(face = "bold", family = "Arial"),
+    axis.text.x = element_text( size = 9),
+    legend.position = "top",
+    legend.title = element_blank(),
+    axis.line = element_line(colour = "black", size = 1),
+    panel.background = element_blank(),
+    strip.background = element_blank(),
+    strip.text = element_text(face = "bold"),
+    panel.grid = element_blank()
+  )
+
+ggsave("test2.png",dpi = 300, width = 8, height = 6)
+
+```
+
 
 ## SIFILIS
 
