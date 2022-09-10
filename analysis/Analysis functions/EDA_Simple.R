@@ -1,3 +1,4 @@
+library(stringi)
 library(tidyverse)
 library(scales)
 library(ggplot2)
@@ -735,15 +736,15 @@ ggplot(plot_data, aes(x = factor(LAST_BIRTH), fill = factor(LAST_BIRTH), y = pro
 
 
 data1 <- data %>% select( "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE",                       
-                              "ETHNICITY", "DEPARTAMEN", "EDU_LEVEL", "NATURAL_REGION", "PARTNER_EDU_LEVEL", "KNOW_ETS", 
+                              "ETHNICITY", "EDU_LEVEL", "NATURAL_REGION", "PARTNER_EDU_LEVEL", "KNOW_ETS", 
                               "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_HIV",  "INTENDED_PREGNANCY", 
                               "PHYSICAL_VIOLENCE", "HOUSEHOLD_MEMBERS", "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", 
                               "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", "TOTAL_CHILDREN", 
                               "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE")
 
 
-data2 <- data1 %>% mutate(CHECKUP_RULE_OUT_HIV = case_when(CHECKUP_RULE_OUT_HIV == 'YES' ~ 1,
-                                                           CHECKUP_RULE_OUT_HIV == 'NO' ~ 0) ,
+data2 <- data1 %>% mutate(CHECKUP_RULE_OUT_HIV = case_when(CHECKUP_RULE_OUT_HIV == 'YES' ~ 0,
+                                                           CHECKUP_RULE_OUT_HIV == 'NO' ~ 1) ,
                           
                  ETHNICITY = case_when(ETHNICITY == 'SPANISH' ~ 'SPANISH',
                                        ETHNICITY == 'FOREIGNER' ~ 'FOREIGNER',
@@ -856,22 +857,14 @@ train.2019 <- createDataPartition(y = d2019$CHECKUP_RULE_OUT_HIV, p = 0.8, list 
 datos_train.2019 <- d2019[train.2019, ]
 datos_test.2019 <- d2019[-train.2019, ]
 
-#2020
-d2020 <- data3 %>% filter(year==2020)
-set.seed(123)
-train.2020 <- createDataPartition(y = d2020$CHECKUP_RULE_OUT_HIV, p = 0.8, list = FALSE, times = 1)
-datos_train.2020 <- d2020[train.2020, ]
-datos_test.2020 <- d2020[-train.2020, ]
-
+#Sin 2020
 
 train <- rbind(datos_train.2010,datos_train.2011,datos_train.2012,datos_train.2013,datos_train.2014,
-               datos_train.2015,datos_train.2016, datos_train.2017,datos_train.2018,datos_train.2019,
-               datos_train.2020)
+               datos_train.2015,datos_train.2016, datos_train.2017,datos_train.2018,datos_train.2019)
 head(train)
 
 test <- rbind(datos_test.2010, datos_test.2011, datos_test.2012, datos_test.2013, datos_test.2014, 
-              datos_test.2015, datos_test.2016, datos_test.2017, datos_test.2018, datos_test.2019, 
-              datos_test.2020)
+              datos_test.2015, datos_test.2016, datos_test.2017, datos_test.2018, datos_test.2019)
 
 write.csv(train,"train.csv")
 write.csv(test,"test.csv")
