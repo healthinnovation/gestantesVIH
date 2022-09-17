@@ -4,7 +4,7 @@ library(scales)
 library(ggplot2)
 library(caret)
 
-data_read<-read.csv("./data/datafinal.csv")
+data_read<-read.csv("./data/data2021final.csv")
 head(data_read)
 names(data_read)
 
@@ -866,5 +866,9 @@ head(train)
 test <- rbind(datos_test.2010, datos_test.2011, datos_test.2012, datos_test.2013, datos_test.2014, 
               datos_test.2015, datos_test.2016, datos_test.2017, datos_test.2018, datos_test.2019)
 
-write.csv(train,"train.csv")
-write.csv(test,"test.csv")
+df2021 <- data3 %>% filter(year %in% c(2021) )
+table(df2021$year)
+
+write.csv(train,"./DataFinal/Train-TestSeparado/train.csv")
+write.csv(test,"./DataFinal/Train-TestSeparado/test.csv")
+write.csv(df2021,"./DataFinal/Train-TestSeparado/df2021.csv")
