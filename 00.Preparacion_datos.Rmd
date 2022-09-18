@@ -34,7 +34,8 @@ nacion <- read_sav("./data/raw/endes back up/2021/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2021/REC41.sav") %>% rename(IDX94 = MIDX)
 #seguro <- read_sav("./data/raw/endes back up/2021/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2021/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2021/RECH6.sav") %>% unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2021/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
 
 df_gestantes2021<-
   gestacion2 %>% 
@@ -46,7 +47,7 @@ df_gestantes2021<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>% 
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2021", 
          V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
                         (V131==2) ~ 3,
@@ -54,7 +55,9 @@ df_gestantes2021<-
                          (V131==10) ~ 1,
                           (V131==11 | V131==12) ~ 5))
 
-dim(df_gestantes2021) 
+
+table(df_gestantes2021$S411H, exclude = NULL) 
+
 ```
 
 
@@ -73,7 +76,7 @@ nacion <- read_sav("./data/raw/endes back up/2020/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2020/REC41.sav") %>% rename(IDX94 = MIDX)
 #seguro <- read_sav("./data/raw/endes back up/2020/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2020/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2020/RECH6.sav") %>% unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2020/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 
 # Gestantes
 
@@ -87,7 +90,7 @@ df_gestantes2020<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>% 
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2020", 
          V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
                         (V131==2) ~ 3,
@@ -110,7 +113,7 @@ nacion <- read_sav("./data/raw/endes back up/2019/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2019/REC41.sav") %>% rename(IDX94 = MIDX)
 #seguro <- read_sav("./data/raw/endes back up/2019/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2019/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2019/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2019/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 
 # Gestantes
 
@@ -124,7 +127,7 @@ df_gestantes2019<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2019",
          V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
                         (V131==2) ~ 3,
@@ -148,7 +151,7 @@ nacion <- read_sav("./data/raw/endes back up/2018/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2018/REC41.sav") %>% rename(IDX94 = MIDX)
 #seguro <- read_sav("./data/raw/endes back up/2018/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2018/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2018/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2018/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 
 # Gestantes
 
@@ -162,7 +165,7 @@ df_gestantes2018<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
- #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   
   mutate(year = "2018",
          V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
@@ -188,7 +191,7 @@ nacion <- read_sav("./data/raw/endes back up/2017/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2017/REC41.sav") %>% rename(IDX94 = MIDX) 
 #seguro <- read_sav("./data/raw/endes back up/2017/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2017/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2017/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2017/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 
 
 # Gestantes
@@ -203,7 +206,7 @@ df_gestantes2017<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2017",
          V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
                         (V131==2) ~ 3,
@@ -227,7 +230,7 @@ nacion <- read_sav("./data/raw/endes back up/2016/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2016/REC41.sav") %>% rename(IDX94 = MIDX) 
 #seguro <- read_sav("./data/raw/endes back up/2016/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2016/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2016/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2016/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 
 # Gestantes
 
@@ -241,7 +244,7 @@ df_gestantes2016<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2016",
          V005 = v005)
 
@@ -262,8 +265,7 @@ nacion <- read_sav("./data/raw/endes back up/2015/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2015/REC41.sav") %>% rename(IDX94 = MIDX) 
 #seguro <- read_sav("./data/raw/endes back up/2015/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2015/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2015/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
-
+children <- read_sav("./data/raw/endes back up/2015/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 # Gestantes
 
 df_gestantes2015<-
@@ -276,7 +278,7 @@ df_gestantes2015<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2015")
 
 dim(df_gestantes2015)
@@ -296,7 +298,7 @@ nacion <- read_sav("./data/raw/endes back up/2014/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2014/REC41.sav") %>% rename(IDX94 = MIDX)  
 #seguro <- read_sav("./data/raw/endes back up/2014/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2014/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2014/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2014/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 
 # Gestantes
 
@@ -310,7 +312,7 @@ df_gestantes2014<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2014",
          SREGION = sregion,
          V005 = v005)
@@ -331,7 +333,7 @@ nacion <- read_sav("./data/raw/endes back up/2013/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2013/REC41.sav") %>% rename(IDX94 = MIDX) 
 #seguro <- read_sav("./data/raw/endes back up/2013/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2013/REC42.sav") %>% select(CASEID,V481,V481A:V481C,v481d:v481x)
-#children <- read_sav("./data/raw/endes back up/2013/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2013/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 
 # Gestantes
 
@@ -345,7 +347,7 @@ df_gestantes2013<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2013",
          V481D = v481d,
          V481E = v481e,
@@ -371,7 +373,7 @@ nacion <- read_sav("./data/raw/endes back up/2012/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2012/REC41.sav") %>% rename(IDX94 = MIDX)
 #seguro <- read_sav("./data/raw/endes back up/2012/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2012/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2012/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = " 0",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2012/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 
 # Gestantes
 
@@ -385,7 +387,7 @@ df_gestantes2012<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2012")
 
 dim(df_gestantes2012)
@@ -405,7 +407,7 @@ nacion <- read_sav("./data/raw/endes back up/2011/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2011/REC41.sav") %>% rename(IDX94 = MIDX)
 #seguro <- read_sav("./data/raw/endes back up/2011/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2011/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2011/RECH6.sav") %>% unite("CASEID", HHID,HC51, sep = " 0",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2011/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 
 
 # Gestantes
@@ -420,7 +422,7 @@ df_gestantes2011<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2011")
 
 dim(df_gestantes2011)
@@ -440,7 +442,7 @@ nacion <- read_sav("./data/raw/endes back up/2010/RECH1.sav") %>% unite("CASEID"
 prenatal <- read_sav("./data/raw/endes back up/2010/REC41.sav") %>% rename(IDX94 = MIDX)
 #seguro <- read_sav("./data/raw/endes back up/2010/RECH4.sav") %>%  unite("CASEID", HHID:IDXH4, sep = "  ",remove = FALSE) #HHID
 seguro <- read_sav("./data/raw/endes back up/2010/REC42.sav") %>% select(CASEID,V481:V481X)
-#children <- read_sav("./data/raw/endes back up/2010/RECH6.sav") %>%  unite("CASEID", HHID,HC51, sep = "  ",remove = FALSE) #HHID
+children <- read_sav("./data/raw/endes back up/2010/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
 
 # Gestantes
 
@@ -454,7 +456,7 @@ df_gestantes2010<-
   left_join(nacion, by = "CASEID") %>%
   left_join(seguro, by = "CASEID") %>%
   left_join(prenatal, by = c("CASEID", "IDX94")) %>%
-  #left_join(children, by = "CASEID") %>%
+  inner_join(children, by = "CASEID") %>%
   mutate(year = "2010")
 
 dim(df_gestantes2010)
@@ -486,22 +488,21 @@ dataset<- map_df(.x = list,
 
 ```{r}
 df_gestantes<- dataset %>% 
-              select( "CASEID", "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE", "ETHNICITY",  "DEPARTAMEN", "LITERACY", "CURRENT_MARITAL_STATUS",  "EDU_LEVEL", "NATURAL_REGION", "PARTNER_APPROVE_DISAPPROVE_FAMILY_PLANNING", "PARTNER_EDU_LEVEL", "CAN_SOMETHING_BE_DONE_PREVENT_AIDS", "KNOW_ETS", "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_SYPHILIS", "CHECKUP_RULE_OUT_HIV", "PRENATAL_CARE_ATTENTION",  "INTENDED_PREGNANCY", "PHYSICAL_VIOLENCE", "DIAGNOSTED_STD_LAST_12_MONTHS", "KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD", "HOUSEHOLD_MEMBERS", "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", "HAVE_ITS_SYMPTOMS",  "TOTAL_CHILDREN", "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE", "LAST_BIRTH", "V001", "V022", "V005", "IDX94") %>% 
-  
-  filter(LAST_BIRTH== "LESS THAN 12 MONTHS" & !is.na(CHECKUP_RULE_OUT_HIV))
+              select( "CASEID", "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE", "ETHNICITY",  "DEPARTAMEN", "LITERACY", "CURRENT_MARITAL_STATUS",  "EDU_LEVEL", "NATURAL_REGION", "PARTNER_APPROVE_DISAPPROVE_FAMILY_PLANNING", "PARTNER_EDU_LEVEL", "CAN_SOMETHING_BE_DONE_PREVENT_AIDS", "KNOW_ETS", "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_SYPHILIS", "CHECKUP_RULE_OUT_HIV", "PRENATAL_CARE_ATTENTION",  "INTENDED_PREGNANCY", "PHYSICAL_VIOLENCE", "DIAGNOSTED_STD_LAST_12_MONTHS", "KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD", "HOUSEHOLD_MEMBERS", "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", "HAVE_ITS_SYMPTOMS",  "TOTAL_CHILDREN", "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE", "LAST_BIRTH", "V001", "V022", "V005", "IDX94","B2","B3") %>% 
 
-#write.csv(df_gestantes,"./data/data2021final.csv", row.names = F)
-
-df<-
-  df_gestantes %>% 
-  group_by(year) %>% 
-  nest() %>% 
   mutate(
-    datasvy = map(.x = data,
-                  .f = ~svydesign(id =~ V001, strata =~ V022, weights=~V005, data=.x))
-  )
-options(survey.lonely.psu="remove")
+    year = as.numeric(year),
+    filtro = year - B2
+  ) %>% 
+  
+  filter(filtro < 2) %>% 
+  
+  group_by(CASEID) %>% 
+  slice(1) %>% 
+  
+  ungroup()
+  
 
+write.csv(df_gestantes,"./data/datatest.csv", row.names = F)
 
 ```
-
