@@ -31,7 +31,8 @@ df_gestantes<- read.csv("./data/datatest.csv") %>%
                       "DIAGNOSTED_STD_LAST_12_MONTHS", "KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD", "HOUSEHOLD_MEMBERS", 
                       "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", 
                       "HAVE_ITS_SYMPTOMS",  "TOTAL_CHILDREN", "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE", "LAST_BIRTH", 
-                      "V001", "V022", "V005", "IDX94") 
+                      "V001", "V022", "V005", "IDX94", filtro) %>% 
+  filter(filtro==1)
 ```
 
 # Grafico 1
