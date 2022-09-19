@@ -31,8 +31,10 @@ df_gestantes<- read.csv("./data/datatest.csv") %>%
                       "DIAGNOSTED_STD_LAST_12_MONTHS", "KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD", "HOUSEHOLD_MEMBERS", 
                       "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", 
                       "HAVE_ITS_SYMPTOMS",  "TOTAL_CHILDREN", "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE", "LAST_BIRTH", 
-                      "V001", "V022", "V005", "IDX94", filtro) %>% 
+                      "V001", "V022", "V005", "IDX94","filtro") %>% 
+  
   filter(filtro==1)
+
 ```
 
 # Grafico 1
@@ -162,14 +164,16 @@ wi_df<-
   group_by(year) %>% 
   mutate(
     vih = map(.x = datasvy,
-              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_HIV2), by = ~WEALTH_INDEX, design = .x, FUN =svyciprop, vartype=c('se','ci')) %>% 
+              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_HIV), by = ~WEALTH_INDEX, design = .x, FUN =svyciprop, vartype=c('se','ci')) %>% 
                 as.data.frame())
   ) %>% 
   unnest(vih) 
+options(survey.lonely.psu="remove")
+
 
 wi_df %>% 
   mutate(
-    across(`as.factor(CHECKUP_RULE_OUT_HIV2)`:ci_u,.fns = ~round(.,3)*100)) %>% 
+    across(`as.factor(CHECKUP_RULE_OUT_HIV)`:ci_u,.fns = ~round(.,3)*100)) %>% 
   
     DT::datatable()
 ```
@@ -183,14 +187,14 @@ edu_df<-
   dplyr::group_by(year) %>% 
   mutate(
     vih = map(.x = datasvy,
-              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_HIV2), by = ~EDU_LEVEL, design = .x, FUN =svyciprop, vartype=c('se','ci')) %>% 
+              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_HIV), by = ~EDU_LEVEL, design = .x, FUN =svyciprop, vartype=c('se','ci'), na.rm.by = T) %>% 
                 as.data.frame())
   ) %>% 
   unnest(vih)
   
  edu_df %>% 
   mutate(
-    across(`as.factor(CHECKUP_RULE_OUT_HIV2)`:ci_u,.fns = ~round(.,3)*100)) %>% 
+    across(`as.factor(CHECKUP_RULE_OUT_HIV)`:ci_u,.fns = ~round(.,3)*100)) %>% 
   
     DT::datatable() 
   
@@ -202,7 +206,7 @@ edu_df<-
 hiv_wi<-
   ggplot()+
   
-  geom_line(data = wi_df, aes(x = year, y = `as.factor(CHECKUP_RULE_OUT_HIV2)`*100,col = WEALTH_INDEX, ymin = ci_l*100, ymax = ci_u*100),
+  geom_line(data = wi_df, aes(x = year, y = `as.factor(CHECKUP_RULE_OUT_HIV)`*100,col = WEALTH_INDEX, ymin = ci_l*100, ymax = ci_u*100),
             size = 0.8, alpha = 0.4)+
   
   # geom_line(data = hiv_df %>% filter(var == "Yes"),
@@ -244,7 +248,7 @@ hiv_wi<-
 hiv_edu<-
   ggplot()+
   
-  geom_line(data = edu_df, aes(x = year, y = `as.factor(CHECKUP_RULE_OUT_HIV2)`*100,col = EDU_LEVEL, ymin = ci_l*100, ymax = ci_u*100),
+  geom_line(data = edu_df, aes(x = year, y = `as.factor(CHECKUP_RULE_OUT_HIV)`*100,col = EDU_LEVEL, ymin = ci_l*100, ymax = ci_u*100),
             size = 0.8, alpha = 0.4)+
   
   # geom_line(data = hiv_df %>% filter(var == "Yes"),

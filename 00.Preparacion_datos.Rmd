@@ -495,7 +495,7 @@ df_gestantes<- dataset %>%
     filtro = year - B2
   ) %>% 
   
-  filter(filtro < 2) %>% 
+  filter(filtro == 1) %>% 
   
   group_by(CASEID) %>% 
   slice(1) %>% 
