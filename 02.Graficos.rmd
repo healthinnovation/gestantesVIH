@@ -33,7 +33,12 @@ df_gestantes<- read.csv("./data/datatest.csv") %>%
                       "HAVE_ITS_SYMPTOMS",  "TOTAL_CHILDREN", "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE", "LAST_BIRTH", 
                       "V001", "V022", "V005", "IDX94","filtro") %>% 
   
-  filter(filtro==1)
+  filter(filtro==1) %>% 
+  
+  mutate(
+    EDU_LEVEL = ifelse(EDU_LEVEL == "PRIMARY","NONE/PRESCHOOL/PRIMARY",
+                       ifelse(EDU_LEVEL == "NONE/PRESCHOOL","NONE/PRESCHOOL/PRIMARY",EDU_LEVEL))
+  )
 
 ```
 
@@ -128,8 +133,7 @@ hiv<-
     panel.grid = element_blank()
   )
 
-hiv + 
-  theme(legend.position = "none")
+ggsave("grafico1a.png", dpi = 300, width = 10)
 ```
 
 ### grafico HIV 2
@@ -154,11 +158,45 @@ bar_hiv<-
     strip.text = element_text(face = "bold"),
     panel.grid = element_blank()
   )
+
+ggsave("grafico1b.png", dpi = 300, width = 8)
+```
+
+
+## WEALTH INDEX
+
+
+```{r}
+df_gestantes2<-
+  df_gestantes %>% 
+    
+  mutate(
+    CHECKUP_RULE_OUT_HIV = ifelse(is.na(CHECKUP_RULE_OUT_HIV),"NO",CHECKUP_RULE_OUT_HIV)
+  )
 ```
 
 
 ```{r}
-# WEALTH INDEX
+###############
+df<-
+  df_gestantes2 %>% 
+  mutate(
+    CHECKUP_RULE_OUT_HIV2 = ifelse(is.na(CHECKUP_RULE_OUT_HIV),"Missing",
+                   ifelse(CHECKUP_RULE_OUT_HIV == 1,"Yes",
+                          ifelse(CHECKUP_RULE_OUT_HIV == 0 | CHECKUP_RULE_OUT_HIV == 8 , "No",CHECKUP_RULE_OUT_HIV))),
+    
+    CHECKUP_RULE_OUT_HIV2 = as.factor(CHECKUP_RULE_OUT_HIV2)
+  ) %>% 
+  group_by(year) %>% 
+  nest() %>% 
+  mutate(
+    datasvy = map(.x = data,
+                  .f = ~svydesign(id =~ V001, strata =~ V022, weights=~V005, data=.x))
+  )
+options(survey.lonely.psu="remove")
+
+###############
+
 wi_df<-
   df %>% 
   group_by(year) %>% 
@@ -178,9 +216,9 @@ wi_df %>%
     DT::datatable()
 ```
 
-
+## EDUCATION
 ```{r}
-# EDUCATION
+
 
 edu_df<-
   df %>% 
@@ -190,7 +228,7 @@ edu_df<-
               .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_HIV), by = ~EDU_LEVEL, design = .x, FUN =svyciprop, vartype=c('se','ci'), na.rm.by = T) %>% 
                 as.data.frame())
   ) %>% 
-  unnest(vih)
+  unnest(vih) 
   
  edu_df %>% 
   mutate(
@@ -266,6 +304,7 @@ hiv_edu<-
   theme_bw()+
   theme(
     axis.title = element_text(face ="bold", size = 11),
+    axis.title.y = element_blank(),
     legend.text = element_text(size = 8, face = "bold"),
     axis.text = element_text(face = "bold", family = "Arial"),
     axis.text.x = element_text( size = 9),
@@ -286,7 +325,7 @@ hiv_edu<-
 ```{r}
 plot_grid(hiv_wi,hiv_edu,labels = c("a","b"))
 
-ggsave("figura1.png", dpi = 300, width = 12, height = 5)
+ggsave("grafico2.png", dpi = 300, width = 12, height = 5)
 
 ```
 
@@ -335,9 +374,7 @@ df2<-
     var = case_when(var == "as.factor(CHECKUP_RULE_OUT_SYPHILIS2)Missing" ~ "Missing",
                     var == "as.factor(CHECKUP_RULE_OUT_SYPHILIS2)YES" ~ "Yes",
                     var == "as.factor(CHECKUP_RULE_OUT_SYPHILIS2)NO" ~ "No")
-  ) %>% 
-  
-  filter(var != "Missing")
+  ) 
 
 
 df2 %>% 
@@ -348,7 +385,7 @@ df2 %>%
   DT::datatable()
 ```
 
-
+# SIFILIS 1
 ```{r}
 sifilis<-
   ggplot(df2, aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100, group = var)) + 
@@ -379,6 +416,33 @@ sifilis<-
   )
 ```
 
+# SIFILIS 2
+```{r}
+bar_sifilis<-
+  ggplot(df2, aes(x = year, y = vihprop*100, group = var)) + 
+  geom_col(size = 1.2, aes(fill = var))+
+  ggsci::scale_fill_futurama(alpha = 0.8)+
+  
+  xlab("Years") +
+  scale_x_continuous(expand = c(0, 0), breaks = c(2010:2021), limits = c(2009.5,2021.6))+
+  ylab("Prop. %")+
+  
+  theme_bw()+
+  
+  theme(
+    axis.title = element_text(face ="bold", size = 11),
+    axis.title.y = element_blank(),
+    legend.text = element_text(face = "bold", size = 12),
+    axis.text = element_text(face = "bold"),
+    legend.position = "top",
+    legend.title = element_blank(),
+    strip.text = element_text(face = "bold"),
+    panel.grid = element_blank()
+  )
+
+
+```
+
 
 ```{r}
 
@@ -390,16 +454,39 @@ plot_grid(plot_grid(hiv + theme(legend.position = "none"),
                     labels = c("A","B")),legend, ncol = 1, rel_heights = c(1,0.1))
 
 
-ggsave("figura1.png", dpi = 300, width = 12, height = 5)
+ggsave("grafico1c.png", dpi = 300, width = 12, height = 5)
+
+
+legend<-cowplot::get_legend(bar_hiv)
+
+plot_grid(plot_grid(bar_hiv + theme(legend.position = "none"),
+                    bar_sifilis+ theme(legend.position = "none"),
+                    
+                    labels = c("a","b")),legend, ncol = 1, rel_heights = c(1,0.1))
+
+
+ggsave("grafico1d.png", dpi = 300, width = 12, height = 7)
 ```
+
+
 
 # Grafico 2
 
 ## HIV
 
 ```{r}
-df<-
+df_gestantes2<-
   df_gestantes %>% 
+    
+  mutate(
+    CHECKUP_RULE_OUT_HIV = ifelse(is.na(CHECKUP_RULE_OUT_HIV),"NO",CHECKUP_RULE_OUT_HIV)
+  )
+```
+
+
+```{r}
+df<-
+  df_gestantes2 %>% 
   mutate(
     CHECKUP_RULE_OUT_HIV2 = ifelse(is.na(CHECKUP_RULE_OUT_HIV),"Missing",
                    ifelse(CHECKUP_RULE_OUT_HIV == 1,"Yes",
@@ -422,17 +509,17 @@ df2<-
   df %>% 
   mutate(
     vih = map(.x = datasvy,
-              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_HIV2), by = ~as.factor(DEPARTAMEN), design = .x, FUN =svyciprop, na.rm.all = T))
+              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_HIV), by = ~as.factor(DEPARTAMEN), design = .x, FUN =svyciprop, na.rm.all = T))
   ) %>% 
   unnest(vih) %>% 
   
   mutate(
-    across(`as.factor(CHECKUP_RULE_OUT_HIV2)`:`se.as.numeric(as.factor(CHECKUP_RULE_OUT_HIV2))`,.fns = ~round(.,2)*100)
+    across(`as.factor(CHECKUP_RULE_OUT_HIV)`:`se.as.numeric(as.factor(CHECKUP_RULE_OUT_HIV))`,.fns = ~round(.,2)*100)
   ) %>%
   
   rename(
     DEPARTAMEN = `as.factor(DEPARTAMEN)`,
-    `HIV Screening` = `as.factor(CHECKUP_RULE_OUT_HIV2)`
+    `HIV Screening` = `as.factor(CHECKUP_RULE_OUT_HIV)`
   ) %>% 
   
   left_join(departamento) %>% 
@@ -464,7 +551,7 @@ df2 %>%
         legend.key.size = unit(0.5, 'cm'))
     
 
-ggsave("figura2.png",width = 13,height = 10, dpi = 300)
+ggsave("grafico3.png",width = 13,height = 10, dpi = 300)
 
 
 ```
@@ -472,8 +559,18 @@ ggsave("figura2.png",width = 13,height = 10, dpi = 300)
 ## SIFILIS
 
 ```{r}
-df<-
+df_gestantes2<-
   df_gestantes %>% 
+    
+  mutate(
+    CHECKUP_RULE_OUT_SYPHILIS = ifelse(is.na(CHECKUP_RULE_OUT_SYPHILIS),"NO",CHECKUP_RULE_OUT_SYPHILIS)
+  )
+```
+
+
+```{r}
+df<-
+  df_gestantes2 %>% 
   mutate(
     CHECKUP_RULE_OUT_SYPHILIS2 = ifelse(is.na(CHECKUP_RULE_OUT_SYPHILIS),"Missing",
                    ifelse(CHECKUP_RULE_OUT_SYPHILIS == 1,"Yes",
@@ -495,17 +592,17 @@ df2<-
   df %>% 
   mutate(
     vih = map(.x = datasvy,
-              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_SYPHILIS2), by = ~as.factor(DEPARTAMEN), design = .x, FUN =svyciprop, na.rm.all = T))
+              .f = ~svyby(~as.factor(CHECKUP_RULE_OUT_SYPHILIS), by = ~as.factor(DEPARTAMEN), design = .x, FUN =svyciprop, na.rm.all = T))
   ) %>% 
   unnest(vih) %>% 
   
   mutate(
-    across(`as.factor(CHECKUP_RULE_OUT_SYPHILIS2)`:`se.as.numeric(as.factor(CHECKUP_RULE_OUT_SYPHILIS2))`,.fns = ~round(.,2)*100)
+    across(`as.factor(CHECKUP_RULE_OUT_SYPHILIS)`:`se.as.numeric(as.factor(CHECKUP_RULE_OUT_SYPHILIS))`,.fns = ~round(.,2)*100)
   ) %>%
   
   rename(
     DEPARTAMEN = `as.factor(DEPARTAMEN)`,
-    `Syphilis Screening` = `as.factor(CHECKUP_RULE_OUT_SYPHILIS2)`
+    `Syphilis Screening` = `as.factor(CHECKUP_RULE_OUT_SYPHILIS)`
   ) %>% 
   
   left_join(departamento) %>% 
@@ -536,7 +633,7 @@ df2 %>%
         legend.key.size = unit(0.5, 'cm'))
     
 
-ggsave("figura3.png",width = 13,height = 10, dpi = 300)
+ggsave("grafico4.png",width = 13,height = 10, dpi = 300)
 
 
 ```
