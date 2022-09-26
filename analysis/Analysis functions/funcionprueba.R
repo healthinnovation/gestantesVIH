@@ -1,7 +1,10 @@
 dataprep<-function(data){
   data %>% 
     select(CASEID,
-      year,V012,
+      year,
+      B2,
+      B3,
+      V012,
       V190,
       V150,
       V025,

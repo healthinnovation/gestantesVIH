@@ -479,7 +479,7 @@ dataset<- map_df(.x = list,
 
 #write.csv(dataset,"./data/data2021/data_2021final.csv", row.names = F)
 
-#(list=ls()) # Elimina todos los objetos del enviroment
+(list=ls()) # Elimina todos los objetos del enviroment
 
 ```
 
