@@ -22,23 +22,7 @@ departamento <- sf::read_sf("data/Regiones/DEPARTAMENTOS.shp")
 
 
 ```{r}
-df_gestantes<- read.csv("./data/datatest.csv") %>% 
-              select( "CASEID","B2", "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", 
-                      "TYPE_PLACE_RESIDENCE", "ETHNICITY",  "DEPARTAMEN", "LITERACY", "CURRENT_MARITAL_STATUS",  
-                      "EDU_LEVEL", "NATURAL_REGION", "PARTNER_APPROVE_DISAPPROVE_FAMILY_PLANNING", "PARTNER_EDU_LEVEL", 
-                      "CAN_SOMETHING_BE_DONE_PREVENT_AIDS", "KNOW_ETS", "KNOW_SYMPTON_ETS", "CHECKUP_RULE_OUT_SYPHILIS", 
-                      "CHECKUP_RULE_OUT_HIV", "PRENATAL_CARE_ATTENTION",  "INTENDED_PREGNANCY", "PHYSICAL_VIOLENCE", 
-                      "DIAGNOSTED_STD_LAST_12_MONTHS", "KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD", "HOUSEHOLD_MEMBERS", 
-                      "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", "PRENATAL_ATTENTION_PLACE", "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", 
-                      "HAVE_ITS_SYMPTOMS",  "TOTAL_CHILDREN", "UNDER_SIXYEARS_CHILDREN", "HEALTH_INSURANCE", "LAST_BIRTH", 
-                      "V001", "V022", "V005", "IDX94","filtro") %>% 
-  
-  filter(filtro==1) %>% 
-  
-  mutate(
-    EDU_LEVEL = ifelse(EDU_LEVEL == "PRIMARY","NONE/PRESCHOOL/PRIMARY",
-                       ifelse(EDU_LEVEL == "NONE/PRESCHOOL","NONE/PRESCHOOL/PRIMARY",EDU_LEVEL))
-  )
+df_gestantes<- read.csv("./data/datatest.csv") 
 
 ```
 
@@ -385,7 +369,7 @@ df2 %>%
   DT::datatable()
 ```
 
-# SIFILIS 1
+### SIFILIS 1
 ```{r}
 sifilis<-
   ggplot(df2, aes(x = year, y = vihprop*100, ymin = `2.5 %`*100, ymax = `97.5 %`*100, group = var)) + 
@@ -416,7 +400,7 @@ sifilis<-
   )
 ```
 
-# SIFILIS 2
+### SIFILIS 2
 ```{r}
 bar_sifilis<-
   ggplot(df2, aes(x = year, y = vihprop*100, group = var)) + 
