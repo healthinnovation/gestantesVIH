@@ -602,9 +602,72 @@ ggplot(plot_data, aes(x = factor(LAST_BIRTH), fill = factor(LAST_BIRTH), y = pro
   )+
   ggtitle("Proporción de hijos de menos de 12 meses")
 
+table(df$CHECKUP_RULE_OUT_HIV)
+df$CHECKUP_RULE_OUT_HIV <- ifelse(df$CHECKUP_RULE_OUT_HIV=='NO',1,0)
+table(df$CHECKUP_RULE_OUT_HIV)
 # VARIABLES NUMERICAS
 #----------------------
-table(df$FIRST_PRENATAL_VISIT)
+table(df$year , df$FIRST_PRENATAL_VISIT)
 table(df$NUMBER_PRENATAL_VISITS)
 table(df$TOTAL_CHILDREN)
 table(df$UNDER_SIXYEARS_CHILDREN)
+
+#- FIRST PRENATAL VISIT
+t1 <- group_by(df, year)%>%
+  mutate(n = n())%>%
+  group_by(year, FIRST_PRENATAL_VISIT)%>%
+  summarise(conteo = sum(CHECKUP_RULE_OUT_HIV)/n())
+t1
+
+ggplot(t1, aes(x = year, y = conteo, group = as.factor(FIRST_PRENATAL_VISIT), color = as.factor(FIRST_PRENATAL_VISIT)))+
+  geom_line(size = 1)+
+  theme(
+    axis.title = element_text(face ="bold", size = 11),
+    legend.text = element_text(face = "bold", size = 12),
+    legend.position = "top"
+    )
+  
+# NUMBER PRENATAL VISIT
+t2 <- group_by(df, year)%>%
+  mutate(n = n())%>%
+  group_by(year, NUMBER_PRENATAL_VISITS)%>%
+  summarise(conteo = sum(CHECKUP_RULE_OUT_HIV)/n())
+t2
+
+ggplot(t2, aes(x = year, y = conteo, group = as.factor(NUMBER_PRENATAL_VISITS), color = as.factor(NUMBER_PRENATAL_VISITS)))+
+  geom_line(size = 1)+
+  theme(
+    axis.title = element_text(face ="bold", size = 11),
+    legend.text = element_text(face = "bold", size = 12),
+    legend.position = "top"
+  )
+
+#TOTAL CHILDREN
+t3 <- group_by(df, year)%>%
+    mutate(n = n())%>%
+    group_by(year, TOTAL_CHILDREN)%>%
+    summarise(conteo = sum(CHECKUP_RULE_OUT_HIV)/n())
+t3
+  
+ggplot(t3, aes(x = year, y = conteo, group = as.factor(TOTAL_CHILDREN), color = as.factor(TOTAL_CHILDREN)))+
+geom_line(size = 1)+
+theme(
+    axis.title = element_text(face ="bold", size = 11),
+    legend.text = element_text(face = "bold", size = 12),
+    legend.position = "top"
+  )
+
+#UNDER_SIXYEARS_CHILDREN
+t4 <- group_by(df, year)%>%
+  mutate(n = n())%>%
+  group_by(year, UNDER_SIXYEARS_CHILDREN)%>%
+  summarise(conteo = sum(CHECKUP_RULE_OUT_HIV)/n())
+t4
+
+ggplot(t4, aes(x = year, y = conteo, group = as.factor(UNDER_SIXYEARS_CHILDREN), color = as.factor(UNDER_SIXYEARS_CHILDREN)))+
+  geom_line(size = 1)+
+  theme(
+    axis.title = element_text(face ="bold", size = 11),
+    legend.text = element_text(face = "bold", size = 12),
+    legend.position = "top"
+  )
