@@ -602,17 +602,21 @@ ggplot(plot_data, aes(x = factor(LAST_BIRTH), fill = factor(LAST_BIRTH), y = pro
   )+
   ggtitle("Proporci√≥n de hijos de menos de 12 meses")
 
+
+# Target cambio
+#----------------
 table(df$CHECKUP_RULE_OUT_HIV)
 df$CHECKUP_RULE_OUT_HIV <- ifelse(df$CHECKUP_RULE_OUT_HIV=='NO',1,0)
 table(df$CHECKUP_RULE_OUT_HIV)
+
 # VARIABLES NUMERICAS
 #----------------------
-table(df$year , df$FIRST_PRENATAL_VISIT)
+table(df$FIRST_PRENATAL_VISIT)
 table(df$NUMBER_PRENATAL_VISITS)
 table(df$TOTAL_CHILDREN)
-table(df$UNDER_SIXYEARS_CHILDREN)
+table(df$year,df$UNDER_SIXYEARS_CHILDREN)
 
-#- FIRST PRENATAL VISIT
+#- FIRST PRENATAL VISIT: 0-1, 2, 3, 4, 5 a m·s
 t1 <- group_by(df, year)%>%
   mutate(n = n())%>%
   group_by(year, FIRST_PRENATAL_VISIT)%>%
@@ -627,7 +631,10 @@ ggplot(t1, aes(x = year, y = conteo, group = as.factor(FIRST_PRENATAL_VISIT), co
     legend.position = "top"
     )
   
-# NUMBER PRENATAL VISIT
+# NUMBER PRENATAL VISIT: 
+# grupo 1: 1 a 7 =8k
+# grupo 2: 8 a 10 = 13k
+# grupo 3: 11 a m·s = 8k
 t2 <- group_by(df, year)%>%
   mutate(n = n())%>%
   group_by(year, NUMBER_PRENATAL_VISITS)%>%
@@ -642,7 +649,7 @@ ggplot(t2, aes(x = year, y = conteo, group = as.factor(NUMBER_PRENATAL_VISITS), 
     legend.position = "top"
   )
 
-#TOTAL CHILDREN
+#TOTAL CHILDREN : 1, 2, 3, 4, 5 a mas
 t3 <- group_by(df, year)%>%
     mutate(n = n())%>%
     group_by(year, TOTAL_CHILDREN)%>%
@@ -657,7 +664,7 @@ theme(
     legend.position = "top"
   )
 
-#UNDER_SIXYEARS_CHILDREN
+#UNDER_SIXYEARS_CHILDREN: 1 , 2 a m·s
 t4 <- group_by(df, year)%>%
   mutate(n = n())%>%
   group_by(year, UNDER_SIXYEARS_CHILDREN)%>%
@@ -671,3 +678,4 @@ ggplot(t4, aes(x = year, y = conteo, group = as.factor(UNDER_SIXYEARS_CHILDREN),
     legend.text = element_text(face = "bold", size = 12),
     legend.position = "top"
   )
+table(df$UNDER_SIXYEARS_CHILDREN)*100/nrow(df)
