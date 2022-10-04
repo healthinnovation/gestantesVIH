@@ -1,7 +1,8 @@
 library(ggradar)
 library(tidyverse)
 library(scales)
-
+library(survey)
+library(fmsb)
 
 df_gestantes<- read.csv("./data/datatest.csv")
 
@@ -80,6 +81,8 @@ df3<-
   
   
   pivot_wider(names_from = "year", values_from = `HIV Screening`) %>% 
+  
+  ungroup() %>% 
 
   
   mutate(
@@ -107,18 +110,31 @@ df3<-
   ) 
   
   
-df3 %>% 
-  group_by(macroreg) %>% 
+
+a<-
+  df3 %>% 
+  
+  select(-macroreg) %>% 
+  
+  mutate(
+    DEPARTAMEN = as.character(DEPARTAMEN)
+  ) %>% 
+  
+  group_by(DEPARTAMEN) %>% 
   
   nest() %>% 
   
   mutate(
+    
     grafico = map(.x = data,
-                  .f = ~ggradar(plot.data = .x,
-                                grid.max = 100,
-                                grid.min = 0,
-                                grid.mid = 50,
-                                values.radar = c("10","30","50","70","100")) 
-    )
-  )
+                  .f = ~ggradar(.x, grid.max = 100, legend.text.size = 8, legend.position = "top"))
+                    
+                    )
+
+
+cowplot::plot_grid(plotlist =  a$grafico, rel_widths = c(1,1,1), rel_heights = c(1,1,1), ncol = 8)
+
+ggsave("test.pdf",width = 18, height = 10, dpi = 300)
+  
+a$grafico[[1]]
 
