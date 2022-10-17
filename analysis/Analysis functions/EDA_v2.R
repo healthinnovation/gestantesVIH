@@ -1,5 +1,6 @@
 library(tidymodels)
 library(tidyverse)
+library(caret)
 
 data_read <- read.csv("./data/datatest.csv")
 glimpse(data_read)
@@ -21,9 +22,6 @@ sum(is.na(df$CHECKUP_RULE_OUT_SYPHILIS)) *100/nrow(df)
 #----- Valores Nulos
 round(colSums(is.na(df))*100/nrow(df),2)
 names(df[colSums(is.na(df))*100/nrow(df)>0])
-
-#----- Recategorizacion
-lista_var <- glimpse(df)
 
 # AGE MOTHER: ok
 #-------------
@@ -679,3 +677,210 @@ ggplot(t4, aes(x = year, y = conteo, group = as.factor(UNDER_SIXYEARS_CHILDREN),
     legend.position = "top"
   )
 table(df$UNDER_SIXYEARS_CHILDREN)*100/nrow(df)
+
+#-----------------
+#RECATEGORIZACION
+#-----------------
+
+df1 <- df %>% select( "year","DEPARTAMEN", 
+                          "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE",                       
+                          "EDU_LEVEL", "NATURAL_REGION", "PARTNER_EDU_LEVEL", "KNOW_ETS", "KNOW_SYMPTON_ETS",  "INTENDED_PREGNANCY", 
+                          "PHYSICAL_VIOLENCE",#NO
+                          "KNOW_HIV_TRANSMISSION_MOTHER_TO_CHILD","HOUSEHOLD_MEMBERS", "PRENATAL_ATTENTION_PLACE", 
+                          "COMPLEXITY_OF_PRENATAL_ATTENTION_PLACE", "HAVE_ITS_SYMPTOMS",#none know_min1
+                          "HEALTH_INSURANCE", "LAST_BIRTH", "FIRST_PRENATAL_VISIT", "NUMBER_PRENATAL_VISITS", 
+                          "TOTAL_CHILDREN", "UNDER_SIXYEARS_CHILDREN", "CHECKUP_RULE_OUT_HIV")
+
+df2 <- df1 %>% mutate( EDU_LEVEL = case_when(EDU_LEVEL == 'HIGHER' ~ 'HIGHER',
+                       EDU_LEVEL == 'NONE/PRESCHOOL' ~ 'NONE/PRESCHOOL-PRIMARY',
+                       EDU_LEVEL == 'PRIMARY' ~ 'NONE/PRESCHOOL-PRIMARY',
+                       EDU_LEVEL == 'SECONDARY' ~ 'SECONDARY'),
+                          
+                          PARTNER_EDU_LEVEL = case_when(PARTNER_EDU_LEVEL == 'HIGHER' ~ 'HIGHER',
+                                                        PARTNER_EDU_LEVEL == 'NONE/PRESCHOOL' ~ 'NONE/PRESCHOOL-PRIMARY',
+                                                        PARTNER_EDU_LEVEL == 'PRIMARY' ~ 'NONE/PRESCHOOL-PRIMARY',
+                                                        PARTNER_EDU_LEVEL == 'SECONDARY' ~ 'SECONDARY'),
+                          
+                          PRENATAL_ATTENTION_PLACE = case_when(PRENATAL_ATTENTION_PLACE == 'MINSA' ~ 'MINSA',
+                                                               PRENATAL_ATTENTION_PLACE != 'MINSA' ~ 'NO_MINSA'),
+                          
+                          HAVE_ITS_SYMPTOMS = case_when(HAVE_ITS_SYMPTOMS == 'NONE' ~ 'NONE',
+                                                        HAVE_ITS_SYMPTOMS == 'BOTH' ~ 'MIN_1',
+                                                        HAVE_ITS_SYMPTOMS == 'ONLY FLOW' ~ 'MIN_1',
+                                                        HAVE_ITS_SYMPTOMS == 'ONLY SORE/ULCER' ~ 'MIN_1'))
+
+table(df1$HAVE_ITS_SYMPTOMS)
+table(df2$HAVE_ITS_SYMPTOMS)
+
+glimpse(df2)
+table(df2$CHECKUP_RULE_OUT_HIV)
+sum(is.na(df2$CHECKUP_RULE_OUT_HIV))
+
+df2$CHECKUP_RULE_OUT_HIV <- as.factor(df2$CHECKUP_RULE_OUT_HIV)
+table(df2$year)
+
+#-------------------
+#TRAIN Y TEST, 2021
+#------------------
+
+df3 <- df2 %>% filter(year != ('2021'))
+glimpse(df3)
+
+IVO <- 25 #VIH (SIPHILIS ->17)
+df3[,IVO] <- as.factor(df3[,IVO])
+años <- unique(df3[,1])
+depa <- unique(df3[,2])
+#n <- NULL
+datos_train.B <- df3[FALSE,ncol(df3)]
+datos_test.B <-  df3[FALSE,ncol(df3)]
+set.seed(2020)
+for(d in 1:length(depa)){
+  for(a in 1:length(años)){
+    dBASE <- df3 %>% filter(year==años[a],DEPARTAMEN==depa[d])
+    train.B <- createDataPartition(y = dBASE[,IVO], p = 0.8, list = FALSE, times = 1)
+    #n[a] <- length(train.B)
+    datos_train.B <- rbind(datos_train.B,dBASE[train.B, ])
+    datos_test.B  <- rbind(datos_test.B,dBASE[-train.B, ])
+  }
+  
+}
+
+head(datos_train.B)
+head(datos_test.B)
+
+#BIND TRAIN
+#datos_train.B <- datos_train.B%>%
+#  mutate(case="TRAIN")
+#datos_test.B <- datos_test.B%>%
+#  mutate(case="TEST")
+#gestantes <- bind_rows(datos_train.B,datos_test.B)
+
+#data 2021
+df2021 <- df2%>%
+  filter(year==2021)
+
+###########################
+# MODELO: DECISIOM TREE
+###########################
+
+df_train <- datos_train.B %>% select(-c(1,2))
+glimpse(df_train)
+df_test <- datos_test.B %>% select(-c(1,2))
+glimpse(df_test)
+
+df_train$CHECKUP_RULE_OUT_HIV <- as.factor(df_train$CHECKUP_RULE_OUT_HIV)
+df_test$CHECKUP_RULE_OUT_HIV <- as.factor(df_test$CHECKUP_RULE_OUT_HIV)
+#-------------------------------------
+
+set.seed(123)
+trees_folds <- vfold_cv(df_train, v = 5, strata = CHECKUP_RULE_OUT_HIV)
+trees_folds
+
+trees_spec <- decision_tree(
+  cost_complexity = tune(),
+  tree_depth = tune(),
+  min_n = tune()
+) %>%
+  set_engine("rpart") %>%
+  set_mode("classification")
+
+trees_rec <- recipe(CHECKUP_RULE_OUT_HIV~., data = df_train)
+
+trees_wf <- workflow() %>%
+  add_model(trees_spec) %>%
+  add_recipe(trees_rec)
+
+library(doParallel)
+library(parallel)
+registerDoParallel()
+
+set.seed(123)
+trees_res <- tune_grid(
+  trees_wf,
+  resamples = trees_folds,
+  grid = 20,
+  metrics = metric_set(mn_log_loss,accuracy,roc_auc,specificity,sensitivity,j_index)
+)
+
+trees_res
+
+trees_res %>%
+  collect_metrics() %>%
+  filter(.metric == "j_index") %>%
+  select(mean, min_n, tree_depth, cost_complexity) %>%
+  pivot_longer(min_n:cost_complexity,
+               values_to = "value",
+               names_to = "parameter"
+  ) %>%
+  ggplot(aes(value, mean, color = parameter)) +
+  geom_point(show.legend = FALSE) +
+  facet_wrap(~parameter, scales = "free_x") +
+  labs(x = NULL, y = "J_Index")
+
+trees_grid <- grid_regular(
+  min_n(range = c(15,30)),
+  tree_depth(range = c(4, 10)),
+  cost_complexity(range = c(-8,-3),trans = log10_trans()) ,
+  levels = 5
+)
+trees_grid
+
+log10(0.001)
+log10(0.000001)
+
+min(trees_grid$min_n); max(trees_grid$min_n)
+min(trees_grid$tree_depth); max(trees_grid$tree_depth)
+min(trees_grid$cost_complexity); max(trees_grid$cost_complexity)
+
+set.seed(123)
+regular_res <- tune_grid(
+  trees_wf,
+  resamples = trees_folds,
+  grid = trees_grid,
+  metrics = metric_set(mn_log_loss,accuracy,roc_auc,specificity,sensitivity,j_index)
+)
+
+regular_res
+
+show_best(regular_res,"sensitivity")
+show_best(regular_res,"specificity")
+show_best(regular_res,"j_index")
+
+best_auc <- select_best(regular_res, "j_index")
+
+final_trees <- finalize_model(
+  trees_spec,
+  best_auc
+)
+
+final_trees
+
+library(vip)
+
+final_trees %>%
+  fit(CHECKUP_RULE_OUT_HIV ~ .,
+      data = df_train
+  ) %>%
+  vip(geom = "point")
+
+final_wf <- workflow() %>%
+  add_recipe(trees_rec) %>%
+  add_model(final_trees)
+
+#Fit train
+final_fit <- final_wf %>% fit(data = df_train)
+final_fit
+
+#Predict test
+df_test_wt <- glimpse(df_test) %>% select(-CHECKUP_RULE_OUT_HIV)
+
+predictions <- final_fit %>%
+  predict(new_data = df_test_wt, type = "prob")
+head(predictions)
+
+predictions_class <- final_fit %>%
+  predict(new_data = df_test_wt)
+head(predictions_class)
+
+library(caret)
+confusionMatrix(predictions_class$.pred_class,as.factor(df_test$CHECKUP_RULE_OUT_HIV),positive = '1')
