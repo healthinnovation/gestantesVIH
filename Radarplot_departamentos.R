@@ -110,31 +110,39 @@ df3<-
   ) 
   
   
+color <- c("#5F4690","#1D6996","#38A6A5","#0F8554",
+           "#73AF48","#EDAD08","#E17C05","#CC503E",
+           "#94346E","#6F4070","#994E95","#666666")
 
+blue_fall <- c("#eaac8b","#e56b6f","#b56576","#6d597a", "#355070","red"
+)
 a<-
   df3 %>% 
   
-  select(-macroreg) %>% 
+  #select(-DEPARTAMEN) %>% 
   
   mutate(
+    macroreg = as.character(macroreg),
     DEPARTAMEN = as.character(DEPARTAMEN)
   ) %>% 
   
-  group_by(DEPARTAMEN) %>% 
+  group_by(macroreg) %>% 
   
   nest() %>% 
   
   mutate(
     
     grafico = map(.x = data,
-                  .f = ~ggradar(.x, grid.max = 100, legend.text.size = 8, legend.position = "top"))
+                  .f = ~ggradar(.x, grid.max = 100, 
+                                legend.text.size = 8, 
+                                legend.position = "bottom", group.colours = color))
                     
                     )
 
 
-cowplot::plot_grid(plotlist =  a$grafico, rel_widths = c(1,1,1), rel_heights = c(1,1,1), ncol = 8)
+cowplot::plot_grid(plotlist =  a$grafico, ncol = 3, labels = "auto")
 
-ggsave("test.pdf",width = 18, height = 10, dpi = 300)
+ggsave("test.jpg",width = 22, height = 11, dpi = 300)
   
 a$grafico[[1]]
 
