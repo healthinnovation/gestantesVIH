@@ -104,8 +104,8 @@ hiv<-
   theme_bw()+
   
   theme(
-    axis.title = element_text(face ="bold", size = 15),
-    legend.text = element_text(size = 10, face = "bold"),
+    axis.title = element_text(face ="bold", size = 12),
+    legend.text = element_text(size = 8, face = "bold"),
     axis.text = element_text(face = "bold", family = "Arial"),
     axis.text.x = element_text( size = 9),
     legend.position = "top",
@@ -117,7 +117,7 @@ hiv<-
     panel.grid = element_blank()
   )
 
-ggsave("grafico1a.png", dpi = 300, width = 10)
+#ggsave("grafico1a.png", dpi = 300, width = 10)
 ```
 
 ### grafico HIV 2
@@ -162,6 +162,10 @@ df_gestantes2<-
 
 ```{r}
 ###############
+df_gestantes2$WEALTH_INDEX <- factor(df_gestantes2 $ WEALTH_INDEX, levels =  c("POOREST", "POOR", "MIDDLE" ,"RICH", "RICHEST"))
+
+df_gestantes2$EDU_LEVEL <- factor(df_gestantes2 $ EDU_LEVEL, levels =  c("NONE/PRESCHOOL", "PRIMARY", "SECONDARY" ,"HIGHER"))
+
 df<-
   df_gestantes2 %>% 
   mutate(
@@ -202,7 +206,6 @@ wi_df %>%
 
 ## EDUCATION
 ```{r}
-
 
 edu_df<-
   df %>% 
@@ -258,7 +261,7 @@ hiv_wi<-
     panel.grid = element_blank()
   )
 
-#ggsave("test.png",dpi = 300, width = 8, height = 6)
+ggsave("test_wealth.png",dpi = 300, width = 8, height = 6)
 
 
 
@@ -301,7 +304,7 @@ hiv_edu<-
     panel.grid = element_blank()
   )
 
-#ggsave("test2.png",dpi = 300, width = 10, height = 8)
+ggsave("test_edu.png",dpi = 300, width = 10, height = 8)
 
 ```
 
@@ -630,8 +633,9 @@ map_hiv <- df2 %>%
   scale_fill_carto_c(palette = "BurgYl")+
   
   guides(fill = guide_colourbar(barheight = 0.5, 
-                                barwidth = 35,
+                                barwidth = 20,
                                 title.position = "top",
+                                size = 15,
                                 direction = "horizontal"),
          
          alpha = "none")+
@@ -642,8 +646,9 @@ map_hiv <- df2 %>%
         panel.background = element_blank(),
         strip.text = element_text(face = "bold"),
         legend.position = "bottom",
-        legend.title = element_text(size = 15, face = "bold"),
-        legend.key.size = unit(0.5, 'cm'))
+        legend.title = element_text(size = 12, face = "bold"),
+        legend.key.size = unit(0.5, 'cm'),
+        plot.margin = margin(r = 1, l = 1, unit = "cm"))
     
 ggsave("grafico5_2010_2021.png",width = 10,height = 8, dpi = 300)
 ```
@@ -652,6 +657,8 @@ ggsave("grafico5_2010_2021.png",width = 10,height = 8, dpi = 300)
 ```{r}
 
 #Prueba plot grid
-plot_grid(map_hiv, hiv, hiv_wi,hiv_edu,labels = c("a","b","c","d"))
+plot_grid (hiv, map_hiv, hiv_wi,hiv_edu,labels = c("a","b","c","d"))
+
+ggsave("join_plot.png", dpi = 300, bg = "white", width = 12, height = 10)
 ```
 
