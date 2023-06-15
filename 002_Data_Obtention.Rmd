@@ -1,0 +1,439 @@
+
+```{r, message=F, warning=F, error=F}
+
+library(tidyverse)
+library(haven)
+library(gtsummary)
+library(survey)
+library(stringr)
+library(dplyr)
+
+```
+
+1. Data_calling
+
+## 2021
+
+```{r, message=F, warning=F, error=F}
+
+Pregnancy <- read_sav("./Raw_ENDES_data/2021/REC94.sav")
+Sociodemographic <- read_sav("./Raw_ENDES_data/2021/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2021/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2021/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2021/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2021/REC41.sav") %>% rename(IDX94 = MIDX)
+Insurance <- read_sav("./Raw_ENDES_data/2021/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2021/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2021<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>% 
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2021", 
+         V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
+                        (V131==2) ~ 3,
+                        (V131==1) ~ 2,
+                         (V131==10) ~ 1,
+                          (V131==11 | V131==12) ~ 5))
+
+
+table(df_pregnant2021$S411H, exclude = NULL) 
+
+```
+
+
+
+## 2020
+
+
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2020/REC94.sav") # outcome # id
+Sociodemographic <- read_sav("./Raw_ENDES_data/2020/REC0111.sav") %>% select(-NCONGLOME)
+HIV1 <- read_sav("./Raw_ENDES_data/2020/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2020/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2020/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2020/REC41.sav") %>% rename(IDX94 = MIDX)
+Insurance <- read_sav("./Raw_ENDES_data/2020/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2020/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2020<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>% 
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2020", 
+         V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
+                        (V131==2) ~ 3,
+                        (V131==1) ~ 2,
+                         (V131==10) ~ 1,
+                          (V131==11 | V131==12) ~ 5))
+               
+dim(df_pregnant2020)  
+```
+
+## 2019
+
+
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2019/REC94.sav") # outcome # id
+Sociodemographic <- read_sav("./Raw_ENDES_data/2019/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2019/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2019/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2019/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2019/REC41.sav") %>% rename(IDX94 = MIDX)
+Insurance <- read_sav("./Raw_ENDES_data/2019/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2019/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2019<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>%
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2019",
+         V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
+                        (V131==2) ~ 3,
+                        (V131==1) ~ 2,
+                         (V131==10) ~ 1,
+                          (V131==11 | V131==12) ~ 5))
+
+dim(df_pregnant2019)  
+
+```
+
+## 2018
+
+
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2018/REC94.sav") # outcome # id 
+Sociodemographic <- read_sav("./Raw_ENDES_data/2018/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2018/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2018/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2018/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2018/REC41.sav") %>% rename(IDX94 = MIDX)
+Insurance <- read_sav("./Raw_ENDES_data/2018/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2018/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2018<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>%
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2018",
+         V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
+                        (V131==2) ~ 3,
+                        (V131==1) ~ 2,
+                         (V131==10) ~ 1,
+                          (V131==11 | V131==12) ~ 5))
+
+dim(df_pregnant2018)  
+
+```
+
+
+## 2017
+
+
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2017/REC94.sav") # outcome # id
+Sociodemographic <- read_sav("./Raw_ENDES_data/2017/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2017/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2017/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2017/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2017/REC41.sav") %>% rename(IDX94 = MIDX) 
+Insurance <- read_sav("./Raw_ENDES_data/2017/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2017/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2017<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>%
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2017",
+         V131 = case_when((V131==3 | V131==4 | V131==5 | V131==6 | V131==7 | V131==8 | V131==9) ~ 4,
+                        (V131==2) ~ 3,
+                        (V131==1) ~ 2,
+                         (V131==10) ~ 1,
+                          (V131==11 | V131==12) ~ 5))
+
+dim(df_pregnant2017)  
+
+```
+
+## 2016
+
+
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2016/REC94.sav") # outcome # id
+Sociodemographic <- read_sav("./Raw_ENDES_data/2016/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2016/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2016/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2016/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2016/REC41.sav") %>% rename(IDX94 = MIDX) 
+Insurance <- read_sav("./Raw_ENDES_data/2016/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2016/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2016<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>%
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2016",
+         V005 = v005)
+
+dim(df_pregnant2016)
+  
+```
+
+
+## 2015
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2015/REC94.sav") # outcome # id
+Sociodemographic <- read_sav("./Raw_ENDES_data/2015/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2015/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2015/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2015/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2015/REC41.sav") %>% rename(IDX94 = MIDX) 
+Insurance <- read_sav("./Raw_ENDES_data/2015/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2015/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2015<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>%
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2015")
+
+dim(df_pregnant2015)
+
+
+```
+
+## 2014
+
+
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2014/REC94.sav") # outcome # id
+Sociodemographic <- read_sav("./Raw_ENDES_data/2014/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2014/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2014/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2014/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2014/REC41.sav") %>% rename(IDX94 = MIDX)  
+Insurance <- read_sav("./Raw_ENDES_data/2014/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2014/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2014<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>%
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2014",
+         SREGION = sregion,
+         V005 = v005)
+
+dim(df_pregnant2014)
+
+```
+
+## 2013
+
+
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2013/REC94.sav") # outcome # id
+Sociodemographic <- read_sav("./Raw_ENDES_data/2013/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2013/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2013/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2013/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2013/REC41.sav") %>% rename(IDX94 = MIDX) 
+Insurance <- read_sav("./Raw_ENDES_data/2013/REC42.sav") %>% select(CASEID,V481,V481A:V481C,v481d:v481x)
+Children <- read_sav("./Raw_ENDES_data/2013/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2013<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>%
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2013",
+         V481D = v481d,
+         V481E = v481e,
+         V481F = v481f,
+         V481G = v481g,
+         V481H = v481h,
+         V481X = v481x)
+
+dim(df_pregnant2013)
+
+
+```
+
+## 2012
+
+
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2012/REC94.sav") # outcome # id
+Sociodemographic <- read_sav("./Raw_ENDES_data/2012/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2012/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2012/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2012/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = " 0",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2012/REC41.sav") %>% rename(IDX94 = MIDX)
+Insurance <- read_sav("./Raw_ENDES_data/2012/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2012/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2012<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>%
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2012")
+
+dim(df_pregnant2012)
+
+
+```
+
+## 2011
+
+
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2011/REC94.sav") # outcome # id
+Sociodemographic <- read_sav("./Raw_ENDES_data/2011/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2011/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2011/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2011/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = " 0",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2011/REC41.sav") %>% rename(IDX94 = MIDX)
+Insurance <- read_sav("./Raw_ENDES_data/2011/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2011//REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2011<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>%
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2011")
+
+dim(df_pregnant2011)
+
+
+```
+
+## 2010
+
+
+```{r, message=F, warning=F, error=F}
+Pregnancy <- read_sav("./Raw_ENDES_data/2010/REC94.sav") # outcome # id
+Sociodemographic <- read_sav("./Raw_ENDES_data/2010/REC0111.sav")
+HIV1 <- read_sav("./Raw_ENDES_data/2010/RE758081.sav")
+HIV2 <- read_sav("./Raw_ENDES_data/2010/REC91.sav")
+Nation <- read_sav("./Raw_ENDES_data/2010/RECH1.sav") %>% unite("CASEID", HHID:HVIDX, sep = "  ",remove = FALSE) #HHID
+Antenatal <- read_sav("./Raw_ENDES_data/2010/REC41.sav") %>% rename(IDX94 = MIDX)
+Insurance <- read_sav("./Raw_ENDES_data/2010/REC42.sav") %>% select(CASEID,V481:V481X)
+Children <- read_sav("./Raw_ENDES_data/2010/REC21.SAV") %>%  group_by(CASEID) %>% filter(BORD == max(BORD))
+
+
+df_pregnant2010<-
+  Pregnancy %>% 
+  left_join(Sociodemographic, by = "CASEID") %>%
+  left_join(HIV1, by = "CASEID") %>% 
+  left_join(HIV2, by = "CASEID") %>%
+  left_join(Nation, by = "CASEID") %>%
+  left_join(Insurance, by = "CASEID") %>%
+  left_join(Antenatal, by = c("CASEID", "IDX94")) %>%
+  inner_join(Children, by = "CASEID") %>%
+  mutate(year = "2010")
+
+dim(df_pregnant2010)
+
+
+```
+
+# Database_union
+
+```{r, message=F, warning=F, error=F}
+list<- list(df_pregnant2010,df_pregnant2011,df_pregnant2012,
+            df_pregnant2013,df_pregnant2014,df_pregnant2015,
+            df_pregnant2016,df_pregnant2017,df_pregnant2018,
+            df_pregnant2019,df_pregnant2020, df_pregnant2021)
+
+dataset<- map_df(.x = list,
+                 .f = ~Data_preparation(.x))
+
+(list=ls())
+
+```
+
+
+2. Transforming data into Survey objects
+
+```{r}
+df_pregnant<- dataset %>% 
+              select("CASEID", "year", "AGE_MOTHER", "WEALTH_INDEX", "RELATIONSHIP_HOUSEHOLD_HEAD", "TYPE_PLACE_RESIDENCE", "HOUSEHOLD_MEMBERS","ETHNICITY", "DEPARTMENT","EDUCATION_LEVEL","NATURAL_REGION","KNOW_STD", "KNOW_STD_SYMPTOM","CHECKUP_RULE_OUT_SYPHILIS", "CHECKUP_RULE_OUT_HIV","PRENATAL_ATTENTION_PROFESSIONAL_LEVEL","INTENDED_PREGNANCY","FIRST_PRENATAL_VISIT","NUMBER_PRENATAL_VISITS","COMPLEXITY_PRENATAL_ATTENTION_PLACE", "HAVE_STD_SYMPTOM","KNOW_MTCT_HIV_DURING_PREGNANCY","KNOW_MTCT_HIV_DURING_CHILDBIRTH","KNOW_MTCT_HIV_DURING_BREASTFEEDING","KNOW_MTCT_HIV","HEALTH_INSURANCE", "CURRENT_MARITAL_STATUS", "V001", "V005","V022", "IDX94","B2") %>% 
+
+  mutate(
+    year = as.numeric(year),
+    filtro = year - B2
+  ) %>% 
+  
+  group_by(CASEID) %>% 
+  slice(1) %>% 
+  
+  ungroup()
+  
+
+write.csv(df_pregnant,"./datatest.csv", row.names = F)
+
+```
