@@ -147,9 +147,9 @@ Data_preparation<-function(data){
       NUMBER_PRENATAL_VISITS = factor(M14, levels = c (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)),
       
       
-      COMPLEXITY_PRENATAL_ATTENTION_PLACE = case_when((M57E==1 | M57I==1 | M57J==1) ~ "LEVEL 3",
-                                                      (M57F==1 | M57H==1 | M57L==1 | M57M==1 | M57N==1 | M57Q==1) ~ "LEVEL 2",
-                                                      (M57G==1 | M57K==1 | M57O==1 | M57P==1 | M57R==1 | M57X==1) ~ "LEVEL 1"),
+      PRENATAL_ATTENTION_PLACE = case_when((M57E==1 | M57I==1 | M57J==1) ~ "PUBLIC HOSPITAL",
+                                           (M57F==1 | M57G==1 | M57K==1 | M57H==1) ~ "HEALTH CENTER/POLYCLINIC/PUBLIC POST",
+                                           (M57L==1 | M57M==1 | M57N==1 | M57O==1 | M57P==1 | M57Q==1 | M57R==1 | M57X==1) ~ "PRIVATE ESTABLISHMENT OR OTHER"),
                                                              
       HAVE_STD_SYMPTOM = case_when((V763B==1 & V763C==0)~"ONLY SORE/ULCER",
                                    (V763B==1 & V763C==8)~"ONLY SORE/ULCER",
